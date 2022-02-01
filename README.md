@@ -37,4 +37,4 @@ THIS TIME THE MAP HAVE NO PEDS OF NPC'S. IS JUST AN EMPTY SCHOOL, YOU NEED TO MA
 
 
                                       THANK YOU FOR READING THIS
-                                                           WITH PLEASURE, Florin Ghitun
+                                                          REGARDS, Florin Ghitun
