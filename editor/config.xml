@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<widget id="com.fgg.tylto" version="1.0.0"
+     xmlns="http://www.w3.org/ns/widgets"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:cdv="http://cordova.apache.org/ns/1.0">
+
+```
+<name>Tylto</name>
+<description>Sample Apache Cordova App</description>
+<author email="dev@cordova.apache.org" href="https://cordova.apache.org">
+    Apache Cordova Team
+</author>
+
+<icon src="resources/icon.png" />
+<content src="index.html" />
+
+<allow-intent href="http://*/*" />
+<allow-intent href="https://*/*" />
+<allow-navigation href="https://*.firebaseapp.com/*" />
+<allow-navigation href="https://*.google.com/*" />
+<allow-navigation href="https://accounts.google.com/*" />
+
+<!-- Plugin-uri necesare aplicației -->
+<plugin name="cordova-plugin-camera" />
+
+<!-- Configurare platformă Android -->
+<platform name="android">
+    <!-- Copiază imaginea splash în folderul corect -->
+    <resource-file
+        src="resources/android/splash/splash-android.png"
+        target="app/src/main/res/drawable-anydpi-v26/splash_icon.png" />
+
+    <!-- Noua metodă de splash screen pentru Android 12+ -->
+<preference name='AndroidWindowSplashScreenAnimatedIcon' value='resources/android/splash/icon-noback.png' />
+    <preference name="AndroidWindowSplashScreenAnimatedIconGravity"
+                value="center" />
+    <preference name="AndroidWindowSplashScreenBackground"
+                value="#1E2022" />
+    <preference name="AndroidWindowSplashScreenDuration"
+                value="3000" />
+    <preference name="AndroidWindowSplashScreenFadeDuration"
+                value="300" />
+
+    <!-- Configurări StatusBar & NavigationBar -->
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#15191C" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+    <preference name="NavigationBarColor" value="#15191C" />
+</platform>
+
+<!-- Configurare platformă iOS -->
+<platform name="ios">
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+    <preference name="StatusBarBackgroundColor" value="#1E2022" />
+    <preference name="NavigationBarColor" value="#1E2022" />
+    <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+        <string>This app needs camera access</string>
+    </edit-config>
+</platform>
+```
+
+</widget>

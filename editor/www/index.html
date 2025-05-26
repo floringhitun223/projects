@@ -1,0 +1,159 @@
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="css/style.css">
+        <meta charset="UTF-8">
+        <meta http-equiv="Permissions-Policy" content="screen-wake-lock=(self)">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <meta name="color-scheme" content="light dark">
+        <meta name="theme-color" content="#31312F">
+    
+        <title>Tylto</title>
+    
+        <!-- Cordova script -->
+        <script src="cordova.js"></script>
+        <script src="js/firebase.js" defer></script>
+        
+    </head>
+    
+<body>
+   <div class="main">
+      <div class="content">
+            <div class="details-container">
+                <div id="home-detail" class="detail-section active">
+                        <div class="topbar">
+                             <div class="search">
+                              <img src="Assets/images/app-logo.png" id="app-logo" alt="">
+                              <input type="search" placeholder="Search documents" id="search-input">
+                             </div>
+                             <div class="account">
+                                  <img src="https://scontent.fias1-1.fna.fbcdn.net/v/t39.30808-6/342921957_898973378064410_5765853173218489082_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=eHRVKuNmG0QQ7kNvwGksGes&_nc_oc=Adlj2GvkYvPr1eatSqhOjBIQaZcjSKKQ6KPEDUlgBhW20bPvHYTUKOekbhucEb8Mf04&_nc_zt=23&_nc_ht=scontent.fias1-1.fna&_nc_gid=6py8MqJtY_DfquTe3TGw3Q&oh=00_AfLeI5AkfFFcvW8aUw6cz65fw-y1zoJP7rixHdi-9J6nNg&oe=683A173E" alt="">
+                             </div>
+       
+                        </div>
+                        
+                    <div class="section-header">
+                          <p class="section-title">Recent files</p>
+                    </div>
+
+                    <div class="section-header">
+                          <p class="section-title">All files</p>
+                          <div class="filter">
+                            <p>Name 🡣</p>
+                          </div>
+                    </div>
+                    <div class="section">
+                        <div class="file">
+                            <img src="Assets/images/spreadshet.png" alt="">
+                            <div class="file-details">
+                                <p class="file-name">Untitled document</p>
+                                 <p class="file-desc">Modified Oct. 11, 2025</p>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+                <div id="add-detail" class="detail-section">
+                    <p class="page-title">What would you like to create today?</p>
+                    <div class="document-types">
+                        <div class="document-type" id="upload-document">
+                            <div class="document-type-body">
+                                 <img src="Assets/images/documents/upload.png" alt="">
+                            </div>
+                            <span class="document-type-title">Upload file</span>
+                           
+                        </div>
+                         <div class="document-type">
+                            <div class="document-type-body">
+                                 <img src="Assets/images/documents/document.png" alt="">
+                            </div>
+                            <span class="document-type-title">Document</span>
+                           
+                        </div>
+                        <div class="document-type">
+                            <div class="document-type-body">
+                                 <img src="Assets/images/documents/spreadsheet.png" alt="">
+                            </div>
+                            <span class="document-type-title">Spreadsheet</span>
+                           
+                        </div>
+                         <div class="document-type">
+                            <div class="document-type-body">
+                                 <img src="Assets/images/documents/presentation.png" alt="">
+                            </div>
+                            <span class="document-type-title">Presentation</span>
+                           
+                        </div>
+                        <div class="document-type">
+                            <div class="document-type-body">
+                                 <img src="Assets/images/documents/database.png" alt="">
+                            </div>
+                            <span class="document-type-title">Database</span>
+                           
+                        </div>
+                         <div class="document-type">
+                            <div class="document-type-body">
+                                 <img src="Assets/images/documents/form.png" alt="">
+                            </div>
+                            <span class="document-type-title">Form</span>
+                           
+                        </div>
+                         <div class="document-type">
+                            <div class="document-type-body">
+                                 <img src="Assets/images/documents/image.png" alt="">
+                            </div>
+                            <span class="document-type-title">Image</span>
+                           
+                        </div>
+                    </div>
+                     <p class="page-title">Explore templates</p>
+                </div>
+                <div id="settings-detail" class="detail-section">Profile content here</div>
+            </div>
+      </div>
+      <div class="navbar">
+        <div class="navbar-item active" data-target="home-detail">
+            <img src="Assets/images/home.png" alt="">
+        </div>
+         <div class="navbar-item" data-target="add-detail">
+            <img src="Assets/images/add.png" alt="">
+        </div>
+         <div class="navbar-item" data-target="settings-detail">
+           <img src="Assets/images/settings.png" alt="">
+        </div>
+      </div>
+      <div class="loading">
+        <img src="Assets/images/app-logo.png" alt="">
+        
+      </div>
+      <div class="editor">
+        <div class="document-editor">
+            <div class="d-e-topbar">
+                <div class="d-e-topbar-tools">
+                    <button class="button" id="undo">
+                        <img src="Assets/images/undo.png" alt="">
+                    </button>
+                    <button class="button" id="redo">
+                        <img src="Assets/images/redo.png" alt="">
+                    </button>
+                    <hr id="hr-vertical-topbar">
+                </div>
+                 <div class="d-e-topbar-actions">
+                    <button class="button" id="more">
+                        <img src="Assets/images/more.png" alt="">
+                    </button>
+                    <button class="button" id="share-project">
+                        <img src="Assets/images/share.png" alt="">
+                    </button>
+                 </div>
+            </div>
+            <div class="d-e-worksheet">
+               <div id="d-e-worksheet-input" contenteditable="true"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>
