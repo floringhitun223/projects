@@ -8,13 +8,13 @@
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
         <meta name="theme-color" content="#31312F">
-    
+      <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
         <title>Tylto - editor</title>
     
         <!-- Cordova script -->
         <script src="cordova.js"></script>
-        <script src="js/firebase.js" defer></script>
-        
+        <script src="js/script.js" defer></script>
+         <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     </head>
     
 <body>
@@ -149,7 +149,24 @@
                  </div>
             </div>
             <div class="d-e-worksheet">
-               <div id="d-e-worksheet-input" contenteditable="true"></div>
+               <div id="d-e-worksheet-input"></div>
+            </div>
+            <div class="d-e-bottombar">
+                <div class="d-e-bottombar-manipulation">
+                    <div class="manipulation-item" id="format-bold">
+                        <img src="Assets/images/editor/bold.png" alt="">
+                    </div>
+                    <div class="manipulation-item" id="format-italic">
+                        <img src="Assets/images/editor/italic.png" alt="">
+                    </div>
+                     <div class="manipulation-item" id="format-underline">
+                        <img src="Assets/images/editor/underline.png" alt="">
+                    </div>
+                    <div class="manipulation-item" id="format-fontSize">
+                        <img src="Assets/images/editor/font.png" alt="">
+                    </div>
+                  <input type="color" id="colorPicker" style="display:none;" />
+                </div>
             </div>
         </div>
       </div>

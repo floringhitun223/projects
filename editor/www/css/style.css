@@ -486,7 +486,7 @@ input::placeholder {
   scrollbar-color: rgba(100, 100, 100, 0.4) transparent;
 }
 .editor{
-  display: none;
+  display: flex;
   width: 100%;
   height: 100%;
   background-color: var(--light-background-color);
@@ -506,49 +506,44 @@ input::placeholder {
 .d-e-worksheet{
   display: flex;
   width: 100%;
-  height: calc(100% - 70px);
+  height: calc(100% - 120px);
   background-color: #2e2e2e;
-
-   color: #000000;
-   
-
+  color: #000000;
 }
 #d-e-worksheet-input{
   background-color: transparent;
   border: none;
   resize: none;
   outline: none;
-  width: calc(100% - 80px);
-  margin-left: 20px;
-  height: calc(100% - 80px);
-  margin-top: 20px;
-  border-radius: 8px;
-  padding: 20px;
+  width: 100%;
+  min-height: 100%;
   overflow: auto;
-     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-     background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
 }
 .d-e-topbar{
   display: flex;
   width: 100%;
-  height: 70px;
+  min-height: 60px;
   background-color: transparent;
   align-items: center;
+
 }
 .d-e-topbar-tools{
   display: flex;
   width: 70%;
   height: 100%;
-  align-items: center;
+align-items: center;
    gap: 10px;
+   
 }
 .d-e-topbar-actions{
   display: flex;
   width: 30%;
   height: 100%;
-   align-items: center;
    justify-content: end;
    gap: 10px;
+   align-items: center;
 }
 .d-e-topbar-tools > :first-child {
   margin-left: 20px;
@@ -576,12 +571,44 @@ input::placeholder {
 }
 #share-project{
   background-color: var(--accent-color);
-  min-width: 40px;
-  height: 40px;
+  min-width: 35px;
+  height: 35px;
 }
 #share-project:active{
   opacity: 0.6;
 }
 #more{
 
+}
+.d-e-bottombar{
+  display: flex;
+  width: 100%;
+ min-height: 60px;
+  align-items: center;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.d-e-bottombar-manipulation{
+  display: flex;
+  height: 100%;
+}
+.manipulation-item{
+  display: flex;
+  width: 50px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  img{
+    width: 20px;
+  }
+}
+.manipulation-item:active{
+ background-color: #ffffff18;
+}
+.colorPicker{
+  display: flex;
+  
+}
+#undo{
+  opacity: 0.5;
 }

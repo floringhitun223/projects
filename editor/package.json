@@ -47,6 +47,8 @@
   },
   "dependencies": {
     "@ionic-native/barcode-scanner": "^5.36.0",
+    "@tiptap/core": "^2.12.0",
+    "@tiptap/starter-kit": "^2.12.0",
     "@zxing/library": "^0.21.3",
     "cordova-plugin-android-permissions": "1.1.5",
     "firebase": "^8.10.1",
