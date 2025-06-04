@@ -4,18 +4,15 @@
     --search-color: #17202B;
     --secondary-text-color: #8193a9;
      --secondary-text-color2:rgb(150, 172, 199)9;
-     
+     --active-color: #273648;
 }
 
 body{
     margin: 0;
-    background-color: #000000;
+    background-color: var(--light-background-color);
    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    user-select: none;
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* IE/Edge */
-  
+
+
 }
 img{
    pointer-events: none;
@@ -74,6 +71,31 @@ h1 {
 #deviceready.ready .event.listening { display: none; }
 #deviceready.ready .event.received { display: block; }
 
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dialog.hide {
+  animation: fadeOutScale 0.3s ease forwards;
+}
+
+@keyframes fadeOutScale {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
 @keyframes fade {
     from { opacity: 1.0; }
     50% { opacity: 0.4; }
@@ -140,7 +162,7 @@ h1 {
   
 @media screen and (prefers-color-scheme: dark) {
     body {
-        background-image:linear-gradient(to bottom, #585858 0%, #1B1B1B 51%);
+        
     }
 }
 .main{
@@ -149,6 +171,7 @@ h1 {
     height: 100%;
     background-color: var(--light-background-color);
     flex-direction: column;
+   
 }
 .topbar{
     display: flex;
@@ -189,7 +212,7 @@ h1 {
 }
 
 .navbar-item:active{
-  background-color: #0000007d;
+  background-color: var(--active-color);
 }
 .navbar > :first-child {
   margin-left: 10px;
@@ -210,21 +233,48 @@ h1 {
 
 .button{
     display: flex;
-    width: 40px;
+    min-width: 40px;
     height: 40px;
     border-radius: 10px;
     border: none;
     align-items: center;
     justify-content: center;
     background-color: transparent;
+    opacity: 0.85;
     img{
-        width: 25px;
+        width: 20px;
+        margin-left: 5px;
+        margin-right: 5px
+    };
+    p{
+    
+      margin-right: 10px;
     }
 }
 
 .button:active{
-     background-color: #ffffff18;
+     background-color: var(--active-color);
 }
+.more_button{
+    display: flex;
+    min-width: 60px;
+    height: 100%;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    img{
+      width: 25px;
+    }
+}
+
+.more_button:active{
+     background-color: var(--active-color);
+    
+}
+
 
 #app-title{
   font-size: 1.1em;
@@ -246,7 +296,7 @@ h1 {
   display: flex;
   width: 100%;
   max-width: 400px;
-  height: calc(100% - 30px);
+  height: calc(100% - 20px);
   background-color: var(--search-color);
   overflow: hidden;
   border: 1px solid #2c3d52;
@@ -255,20 +305,20 @@ h1 {
   margin-left: 20px;
   transition: 0.1s ease all;
   outline: none;
-  input{
-    background-color: var(--search-color);
-    outline: none;
-    border: none;
-    margin-left: 5px;
-    height: 100%;
-    width: 100%;
-  };
   img{
     width: 20px;
     height: 20px;
     margin-left: 10px;
     opacity: 0.7;
   }
+}
+#search-input{
+ background-color: var(--search-color);
+    outline: none;
+    border: none;
+    margin-left: 5px;
+    height: 100%;
+    width: 100%;
 }
 input::placeholder {
   color: rgb(255, 255, 255);  
@@ -338,13 +388,20 @@ input::placeholder {
   width: 100%;
   height: 60px;
   align-items: center;
-  img{
-    margin-left: 20px;
+  padding: 5px;
+
+}
+
+.file-img{
+  margin-left: 20px;
     width: 30px;
     height: 30px;
     margin-right: 10px;
-  }
 }
+.file:active{
+    background-color: var(--active-color);
+}
+
 .file-details{
   display: flex;
   width: 100%;
@@ -370,13 +427,8 @@ input::placeholder {
   font-weight: 400;
   color: var(--secondary-text-color);
 }
-#search-input:focus{
- 
-}
-.search.focused{
-  width: 100%;
-  background-color: #000000;
-}
+
+
 .page-title{
   font-size: 20px;
   margin-left: 20px;
@@ -440,7 +492,7 @@ input::placeholder {
   align-items: center;
   justify-content: center;
   img{
-    width: 70px;
+    width: 70px; 
     animation: pulse 1s ease-in-out infinite;
   transform-origin: center;
   }
@@ -467,7 +519,7 @@ input::placeholder {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent; /* Or use a light gray */
+  background: transparent; 
 }
 
 ::-webkit-scrollbar-thumb {
@@ -486,13 +538,15 @@ input::placeholder {
   scrollbar-color: rgba(100, 100, 100, 0.4) transparent;
 }
 .editor{
-  display: flex;
+  display:none;
   width: 100%;
   height: 100%;
   background-color: var(--light-background-color);
   position: absolute;
   top: 0;
+   overflow: hidden;
   left: 0;
+
 }
 
 .document-editor{
@@ -503,37 +557,65 @@ input::placeholder {
   align-items: center;
   justify-content: center;
 }
-.d-e-worksheet{
+.d-e-worksheet {
   display: flex;
   width: 100%;
   height: calc(100% - 120px);
   background-color: #2e2e2e;
-  color: #000000;
+  z-index: 9;
+  justify-content: center;
+
 }
-#d-e-worksheet-input{
-  background-color: transparent;
-  border: none;
-  resize: none;
-  outline: none;
+
+#d-e-worksheet-input {
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   overflow: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #ffffff;
+  background-color: var(--light-background-color);
+  color: #ffffff;
+  z-index: 10;
+  border: none;
+  font-family: 'Times New Roman', serif;
+  font-size: 15px;
+  
 }
+
+/* The circular resize handle */
+.resize-handle {
+  position: fixed;          /* fixed makes it ignore parent stacking contexts */
+  width: 16px;
+  height: 16px;
+  background: blue;
+  border-radius: 50%;
+  cursor: nwse-resize;
+  user-select: none;
+  display: none;            /* hide until an image is clicked */
+  z-index: 9999;            /* on top of everything */
+  opacity: 0.8;
+}
+#format-image-edit{
+  display: none;
+}
+  .resize-container {
+    position: relative;
+    display: inline-block;
+    border: 1px dashed #444;
+       z-index: 99999;
+  }
 .d-e-topbar{
   display: flex;
   width: 100%;
   min-height: 60px;
-  background-color: transparent;
+  background-color: var(--light-background-color);
   align-items: center;
-
+   z-index: 11;
+   border-bottom: 1px solid #243242;
 }
 .d-e-topbar-tools{
   display: flex;
-  width: 70%;
+  width: 100%;
   height: 100%;
-align-items: center;
+  align-items: center;
    gap: 10px;
    
 }
@@ -568,6 +650,7 @@ align-items: center;
   background-color: #27374b;
   margin-left: 5px;
   border-radius: 8px;
+  margin-right: 0;
 }
 #share-project{
   background-color: var(--accent-color);
@@ -587,10 +670,27 @@ align-items: center;
   align-items: center;
   overflow-y: hidden;
   overflow-x: auto;
+   z-index: 11;
+   background-color: #17202B;
+    border-top: 1px solid #243242;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;       /* Firefox 64+ */
+     -ms-overflow-style: none;    /* IE 10+ and old Edge */
+}
+.d-e-bottombar::-webkit-scrollbar {
+  display: none;
 }
 .d-e-bottombar-manipulation{
   display: flex;
+  align-items: center;
   height: 100%;
+  gap: 10px;
+}
+.d-e-bottombar-manipulation > :last-child {
+  margin-right: 20px;
+}
+.d-e-bottombar-manipulation > :first-child {
+  margin-left: 20px;
 }
 .manipulation-item{
   display: flex;
@@ -598,17 +698,254 @@ align-items: center;
   height: 100%;
   align-items: center;
   justify-content: center;
+  
   img{
     width: 20px;
   }
 }
 .manipulation-item:active{
- background-color: #ffffff18;
+ opacity: 0.5;
 }
-.colorPicker{
+#colorPicker{
   display: flex;
-  
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background-color: transparent;
 }
-#undo{
+#format-fontColor{
+  display: flex;
+  flex-direction: column;
+}
+#undo, #redo{
   opacity: 0.5;
 }
+#expandBar {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.bottombar-extra {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: auto;
+  max-height: calc(100% - 150px);        /* max 80% viewport height */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  bottom: 70px;
+  right: 20px;
+  background-color: var(--search-color);
+  border-radius: 8px;
+  z-index: 11;
+
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+
+
+.font-size{
+  display: flex;
+  width: 100%;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  
+}
+.font-size {
+  cursor: pointer;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  img{
+    width: 20px;
+  }
+}
+
+.font-size.active {
+  background-color: #007bff !important;
+  color: white !important;
+  border-color: #0056b3;
+}
+.font-size:active{
+  opacity: 0.6;
+}
+/* when this class is present, show it */
+.bottombar-extra.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+
+}
+#add-object-butt.active {
+  background-color: #253243;
+  color: white;
+  opacity: 1;
+}
+
+#format-alignMore.active {
+  background-color: #253243; /* example color */
+  color: white; /* optional: change text color */
+}
+#format-fontSize.active {
+  background-color: #253243; /* example color */
+  color: white; /* optional: change text color */
+}
+#format-alignLeft, #format-alignCenter, #format-alignJustify, #format-alignRight{
+  min-height: 50px;
+}
+.manipulation-item-extra{
+  display: flex;
+  width: 50px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  
+  img{
+    width: 20px;
+  }
+}
+.manipulation-item-extra:active{
+ opacity: 0.5;
+}
+.dialog {
+  display: flex;
+  width: 70%;
+  max-width: 500px;
+  min-height: 50px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 20;
+  background-color: #283e5a; /* semi-transparent black */
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation-fill-mode: forwards;
+  border-radius: 10px;
+  p{
+    margin-left: 10px;
+    margin-right: 20px;
+  };
+  img{
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
+  }
+}
+
+.dialog.show {
+  display: flex;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.dialog.hide {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* tiny 3D transform hack */
+.__force-redraw {
+  transform: translate3d(0,0,0);
+}
+.add-object {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 40px);
+  max-width: 500px;
+  border-radius: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  top: 70px;
+  left: 20px;
+  z-index: 12;
+  background-color: var(--search-color);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+.image-manipulation {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  display: flex; /* or your preferred layout */
+  position: absolute;
+  bottom: 70;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--search-color);
+  width: calc(100% - 40px);
+  align-items: center;
+  height: 50px;
+  z-index: 12;
+  border-radius: 10px;
+}
+
+.image-manipulation.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Toggle button active style */
+#format-image-edit.active {
+  background-color: #334762; /* or your active color */
+  color: white;
+}
+#replace-image{
+  margin-left: 5px;
+  background-color: var(--active-color);
+  min-width: 100px;
+}
+#replace-image:active{
+  background-color: #334762;
+}
+#image-size{
+  margin-left: 20px;
+  margin-right: 20px;
+ width: 100%;
+}
+.add-object.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.object-type{
+  display: flex;
+  width: 100%;
+  min-height: 50px;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.9;
+  img{
+    width: 25px;
+    margin-left: 20px;
+  }
+}
+.object-type:active{
+  opacity: 1;
+  background-color: var(--active-color);
+}
+
+
+

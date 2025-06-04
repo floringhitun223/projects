@@ -35,14 +35,14 @@
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-navigationbar-color": {},
-      "cordova-plugin-fullscreen": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-camera": {
         "ANDROIDX_CORE_VERSION": "1.6.+"
       },
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-camera-preview": {},
-      "cordova-plugin-splashscreen": {}
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-fullscreen": {}
     }
   },
   "dependencies": {

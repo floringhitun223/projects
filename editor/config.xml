@@ -27,38 +27,39 @@
 <!-- Configurare platformă Android -->
 <platform name="android">
     <!-- Copiază imaginea splash în folderul corect -->
+     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity[@android:name='MainActivity']">
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+      </intent-filter>
+    </edit-config>
+    
+    <resource-file src="res/android/colors.xml" target="app/src/main/res/values/colors.xml" />
     <resource-file
         src="resources/android/splash/splash-android.png"
         target="app/src/main/res/drawable-anydpi-v26/splash_icon.png" />
-
+<preference name="KeyboardResize" value="true" />
+<preference name="KeyboardResizeMode" value="native" />
     <!-- Noua metodă de splash screen pentru Android 12+ -->
 <preference name='AndroidWindowSplashScreenAnimatedIcon' value='resources/android/splash/icon-noback.png' />
     <preference name="AndroidWindowSplashScreenAnimatedIconGravity"
                 value="center" />
     <preference name="AndroidWindowSplashScreenBackground"
-                value="#1E2022" />
+                value="#4DA3FF" />
     <preference name="AndroidWindowSplashScreenDuration"
                 value="3000" />
     <preference name="AndroidWindowSplashScreenFadeDuration"
                 value="300" />
 
     <!-- Configurări StatusBar & NavigationBar -->
-    <preference name="StatusBarOverlaysWebView" value="false" />
-    <preference name="StatusBarBackgroundColor" value="#15191C" />
-    <preference name="StatusBarStyle" value="lightcontent" />
-    <preference name="NavigationBarColor" value="#15191C" />
+ <preference name="StatusBarOverlaysWebView" value="false" />
+<preference name="StatusBarBackgroundColor" value="#12141A" />
+<preference name="NavigationBarBackgroundColor" value="#17202B" />
 </platform>
 
 <!-- Configurare platformă iOS -->
-<platform name="ios">
-    <preference name="StatusBarOverlaysWebView" value="false" />
-    <preference name="StatusBarStyle" value="lightcontent" />
-    <preference name="StatusBarBackgroundColor" value="#1E2022" />
-    <preference name="NavigationBarColor" value="#1E2022" />
-    <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
-        <string>This app needs camera access</string>
-    </edit-config>
-</platform>
+
 ```
 
 </widget>
