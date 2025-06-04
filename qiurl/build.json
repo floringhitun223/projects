@@ -1,0 +1,11 @@
+{
+    "android": {
+      "release": {
+        "output": "./build/qiurl-2025.apk"
+      },
+      "debug": {
+        "output": "./build/qiurl-2025.apk"
+      }
+    }
+  }
+  

@@ -1,0 +1,599 @@
+<html lang="en">
+    <head>
+        <link rel='stylesheet' href='css/style.css'>
+        <meta charset="UTF-8">
+        <meta http-equiv="Permissions-Policy" content="screen-wake-lock=(self)">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <meta name="color-scheme" content="light dark">
+        <meta name="theme-color" content="#31312F"> 
+        <!-- Add to your document head -->
+       
+            <title>qiurl</title>
+            <script src="cordova.js"></script>
+            <script src='js/script.js' defer></script>
+            <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+            <script type="module" src="js/firebase.js"></script>
+           
+    </head>
+<body>
+    <div class="main">
+        <div class="topbar">
+            <img src="Assets/images/qiurl-logo-white.png" alt="">
+        </div>
+        
+        <div class="scenes">
+            <div class="scene-home">
+                <div class="featured">
+                    <span class="category-heading">New to qiurl</span>
+                    <div class="featured-section">
+                        <div class="featured-movie">
+                            <img src="" alt="" id="featured-movie-img">
+                        </div>
+                        <div class="featured-movie-details">
+                            <span id="featured-movie-title"></span>
+                            <span id="featured-movie-category"></span>
+                            <p id="featured-movie-desc"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                    <span class="category-heading" id="category-heading-continue">Continue watching</span>
+                     <div class="continue-watching">
+                    <div class="continue-movie">
+                        <img src="" loading="lazy" alt="" id="continue-movie-img">
+                        <div class="overlay">
+                            <img src="Assets/images/play.png" alt="">
+                            <div class="continue-progress">
+                                <div class="continue-progress-flow"></div>
+                            </div>
+                        </div>
+                        <span class="continue-title"></span>
+                        <span class="continue-episode"></span>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="scene-search">
+                <div class="search-input">
+                    <input type="search" placeholder="Search title (or use @ to search by author)" id="search-field">
+                    <button id="filter-button"><img src="Assets/images/filer.png" alt=""></button>
+                </div>
+                <div class="search-content">
+                   
+                    
+                    
+                </div>
+                <div class="no-result">
+                    <img src="Assets/images/not-found.png" alt="">
+                    <span>No results found</span>
+                </div>
+                <div class="search-suggestions">
+                    <div class="suggestion">
+                        <img src="Assets/images/time.png" alt="">
+                        <span>Flapjack</span>
+                        <img src="Assets/images/redirect.png"  id="redirect-button" alt="">
+                    </div>
+                    
+                   
+                </div>
+                <div class="search-loading">
+                    <img src="Assets/images/qiurl-logo-white.png" alt="">
+                </div>
+            </div>
+            <div class="scene-account">
+                <div class="user-details">
+                    <div class="user-picture">
+                        <img src="Assets/images/profileImg.png" alt="" id="user-pic">
+                    </div>
+                    <div class="user-infos">
+                        <span id="user-name">Florin Ghitun</span>
+                        <span id="user-email">florinnghitun@gmail.com</span>
+                    </div>
+                    <button class="button" id="user-edit">
+                        <img src="Assets/images/edit2.png" alt="">
+                    </button>
+                </div>
+                <div class="not-logged">
+                    <span>You are not signed in</span>
+                    <button class="button" id="login">
+                        Sign in
+                    </button>
+                </div>
+                <div class="settings-section">
+                    <div class="single-setting">
+                        <img src="Assets/images/notif.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">Allow notifications</span>
+                            <span id="setting-desc">Let ur app send notifications about movies</span>
+                        </div>
+                        <div class="setting-actions">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="settings-section">
+                    <div class="single-setting">
+                        <img src="Assets/images/wifi.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">Only on Wi-fi</span>
+                            <span id="setting-desc">Let app work just when connected to wi-fi network</span>
+                        </div>
+                        <div class="setting-actions">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                    <div class="single-setting">
+                        <img src="Assets/images/usage2.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">Restrict usage</span>
+                            <span id="setting-desc">Limit usage operations</span>
+                        </div>
+                        <div class="setting-actions">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                    <div class="single-setting" onclick="showUsage();">
+                        <img src="Assets/images/usage.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">See usage</span>
+                            <span id="setting-desc">View your total usage in reads and writes</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <div class="single-setting" id="settings-servers">
+                        <img src="Assets/images/server.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">App servers</span>
+                            <span id="setting-desc">If you disable this, you need to re-enable it from firestore database</span>
+                        </div>
+                        <div class="setting-actions">
+                            <input type="checkbox" id="servers-on-off">
+                        </div>
+                    </div>
+                    <div class="single-setting" id="add-content">
+                        <img src="Assets/images/movie.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">Manage movies</span>
+                            <span id="setting-desc">Add, edit and remove movies and categories</span>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="settings-section">
+                    <div class="single-setting">
+                        <img src="Assets/images/bug.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">Debug mode</span>
+                            <span id="setting-desc">Enabling this will let app write errors and infos on log</span>
+                        </div>
+                        <div class="setting-actions">
+                            <input type="checkbox" id="debug-mode">
+                        </div>
+                    </div>
+                    <div class="single-setting" onclick="showLog();">
+                        <img src="Assets/images/log.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">See debug log</span>
+                            <span id="setting-desc">View all the logs that app registered</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <div class="single-setting">
+                        <img src="Assets/images/warn.png"  class="setting-img">
+                        <div class="setting-about">
+                            <span id="setting-title">Report content</span>
+                            <span id="setting-desc">If you own a picture, movie, or any other asset, you may request its removal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="movie-page">
+            <div class="movie-page-loading">
+                <img src="Assets/images/qiurl-logo-white.png" alt="">
+            </div>
+            <div class="movie-banner">
+                <img src="" loading="lazy" alt="" id="movie-banner-image">
+            </div>
+            <div class="movie-actions">
+                <div class="movie-actions-left">
+                    <img src="Assets/images/star.png" alt="" id="rating-img">
+                    <span id="movie-rating">0</span>
+                    <hr class="mini-hr">
+                    <span id="movie-rating-number">0</span>
+                    
+                </div>
+                <div class="movie-actions-right">
+                    <button id="movie-play">
+                        <img src="Assets/images/play2.png" alt="">
+                        <span>Play</span>
+                    </button>
+                    <button class="actions-buttons" id="save-favorite">
+                        <img src="Assets/images/like.png" alt="">
+                    </button>
+                    <button class="actions-buttons">
+                        <img src="Assets/images/share.png" alt="">
+                    </button>
+                    <button class="actions-buttons" id="actions-buttons-more">
+                        <img src="Assets/images/dots.png" alt="" >
+                    </button>
+                </div>
+
+            </div>
+            <div class="movie-about">
+                <span id="movie-about-title"></span>
+                <span id="movie-about-subtitle"></span>
+                <p id="movie-about-desc"></p>
+                <span id="movie-about-readmore">Read Less</span>
+            </div>
+            <div class="movie-more-episodes">
+                <hr>
+            <div class="movie-episodes-top">
+                <div class="movie-episodes-top-left active">
+                    <span>Episodes</span>
+                </div>
+                <div class="movie-episodes-top-right">
+                    <span id="similar-category">Similar titles</span>
+                </div>
+               
+            </div>
+            <div class="movie-episodes">
+                <span id="no-episode">No episodes</span>
+            </div>
+            <div class="movie-similar">
+                
+            </div>
+            </div>
+            
+        </div>
+        <div class="category-page">
+            <img src="Assets/images/image.png" id="category-page-header" alt="">
+            <span id="category-page-title">Loading...</span>
+            <div class="category-all-section">
+
+            </div>
+            <div class="category-loading">
+                <img src="Assets/images/qiurl-logo-white.png" alt="">
+            </div>
+        </div>
+        <div class="navbar">
+            <button class="navbar-buttons" id="home" onclick="showHomePage()">
+                <img src="Assets/images/home.png" alt="">
+            </button>
+            <button class="navbar-buttons" id="search" onclick="showSearchPage()">
+                <img src="Assets/images/search.png" alt="">
+            </button>
+            <button class="navbar-buttons" id="account" onclick="showAccountPage()">
+                <img src="Assets/images/account.png" alt="">
+            </button>
+        </div>
+       
+    </div>
+    <div class="loading">
+        <img src="Assets/images/qiurl-logo-white.png" alt="">
+    </div>
+    <div class="error">
+        <img src="Assets/images/error.png" alt="">
+        <span>Sorry, we can't reach our servers right now. Try again later.</span>
+        <button class="error-button" onclick="location.reload();">Retry</button>
+    </div>
+  
+    <div class="add-movie">
+        <div class="add-movie-loading">
+            <img src="Assets/images/qiurl-logo-white.png" alt="">
+        </div>
+        <div class="add-movie-content">
+        <div class="select-options" id="movie-options">
+           
+            
+        </div>
+        <div class="select-options" id="category-options">
+            <div class="select-option" onclick="hideCategoryList();" id="category-option">
+                <input type="radio">
+                <span class="option-title">Desene Jetix</span>
+            </div>
+        </div>
+        <span class="add-cat-title">Category</span>
+        <div class="simulated-select" onclick="showCategoryList();" id="simulated-category">
+            <span class="select-title" id="select-titleCat">Select category</span>
+            <img src="Assets/images/arrow.png" alt="" id="select-arrow">
+        </div>
+        <span class="add-cat-title">Select movie</span>
+        <div class="simulated-select" onclick="showSelectList();" id="simulated-movie">
+            <img src="Assets/images/image.png" alt="" id="select-image">
+            <span class="select-title"id="select-titleMovie">Select a movie</span>
+            <img src="Assets/images/arrow.png" alt="" id="select-arrow">
+        </div>
+        <div class="add-movie-episodes">
+            <button class="add-movie-add-ep" onclick="showAddEpisode();">
+                <span>Add episode</span>
+            </button>
+            
+        </div>
+    </div>
+        <div class="add-movie-bottombar">
+            <button class="movie-actions-button">
+                <img src="Assets/images/arrowUP.png" alt="" id="actions-arrow">
+                Action
+            </button>
+            <button class="add-movie-button" onclick="showPage('scene-account'); hideAddMovies();">Done</button>
+           <div class="actions-movie">
+                <div class="action-movie">
+                    <img src="Assets/images/hide.png" alt="">
+                    <span>Make private</span>
+                </div>
+                <div class="action-movie">
+                    <img src="Assets/images/edit.png" alt="">
+                    <span>Edit</span>
+                </div>
+                <div class="action-movie" id="delete-movie-cat">
+                    <img src="Assets/images/delete.png" alt="">
+                    <span>Delete</span>
+                </div>
+           </div>
+        </div>
+        <div class="black-back"></div>
+        <div class="add-episode">
+            <div class="add-episode-top">
+                <span>Add episode</span>
+            </div>
+            <div class="add-episode-content">
+                
+                <div class="add-episode-section">
+                    <img src="Assets/images/font.png" id="episode-name-img" alt="">
+                    <input type="text" class="add-episode-inputs" id="episode-name" placeholder="Episode name">
+                </div>
+                <div class="add-episode-section">
+                    <img src="Assets/images/url.png" id="episode-url-img" alt="">
+                    <input type="url" class="add-episode-inputs" id="episode-url" placeholder="Episode url">
+                </div>
+                <span id="iframe-preview-title">Preview</span>
+                <iframe src="" frameborder="0" sandbox="allow-same-origin allow-scripts allow-forms" id="preview-add-episode"></iframe>
+                <div class="success-added">
+                    <img src="Assets/images/check.png" alt="" id="success-img">
+                    <span id="add-success">Episode added to <span id="add-success-movie">Curaj, caine fricos</span>!</span>
+                </div>
+            </div>
+            <div class="add-episode-bottom">
+                <button class="add-episode-bottomButtons" id="import-add-episode">Import</button>
+                <button class="add-episode-bottomButtons" id="cancel-add-episode" onclick="hideAddEpisode();">Close</button>
+                <button class="add-episode-bottomButtons" id="confirm-add-episode" >Add episode</button>
+                <img src="Assets/images/qiurl-logo-white.png" alt="" id="loading-add-episode">
+            </div>
+        </div>
+        <div class="add-category">
+            <div class="add-episode-top">
+                <span>Add category</span>
+            </div>
+            <div class="add-category-content">
+                    <div class="add-episode-section">
+                    <img src="Assets/images/font.png" id="episode-name-img" alt="">
+                    <input type="text" class="add-episode-inputs" id="category-name" placeholder="Category name">
+                    </div>
+                    <div class="add-episode-section">
+                        <img src="Assets/images/url.png" id="episode-name-img" alt="">
+                        <input type="text" class="add-episode-inputs" id="category-image" placeholder="Banner image url (optional)">
+                    </div>
+                    <div class="add-episode-section-textarea">
+                        <textarea name="" id="" placeholder="Category description (optional)"></textarea>
+                        </div>
+                    <div class="category-preview">
+                        <div class="category-preview-img">
+                            <img src="Assets/images/image-placeholder.png" alt="" loading="lazy" id="category-preview-image">
+                        </div>
+                        <span id="category-name-preview">Category name</span>
+                    </div>
+            </div>
+            <div class="add-episode-bottom">
+                <button class="add-episode-bottomButtons" id="cancel-add-category" onclick="hideAddCategory();">Close</button>
+                <button class="add-episode-bottomButtons" id="confirm-add-category">Add category</button>
+                <img src="Assets/images/qiurl-logo-white.png" alt="" id="loading-add-category">
+            </div>
+        </div>
+        <div class="add-actual-movie">
+            <div class="add-episode-top">
+                <span>Add movie</span>
+            </div>
+            <div class="add-actual-movie-content">
+                    <div class="add-episode-section">
+                    <img src="Assets/images/font.png" id="episode-name-img" alt="">
+                    <input type="text" class="add-episode-inputs" id="actual-movie-name" placeholder="Movie title" maxlength="40">
+                    </div>
+                    <div class="lenghts">
+                        <span class="title-lenghts" id="title-actual-lenght">0</span>
+                        <span class="title-lenghts" id="title-max-lenght">/40</span>
+                    </div>
+                    <div class="add-episode-section">
+                        <img src="Assets/images/url.png" id="episode-name-img" alt="">
+                        <input type="text" class="add-episode-inputs" id="actual-movie-image" placeholder="Banner image url (1280x720)">
+                    </div>
+                    <div class="add-episode-section">
+                        <img src="Assets/images/url.png" id="episode-name-img" alt="">
+                        <input type="text" class="add-episode-inputs" id="actual-movie-favicon" placeholder="Favicon image url (720x1280)">
+                    </div>
+                    <div class="add-episode-section-textarea">
+                        <textarea name="" id="actual-movie-desc" placeholder="Movie description"></textarea>
+                        </div>
+                    <div class="movie-preview">
+                        <div class="movie-preview-img">
+                            <img src="Assets/images/image-placeholder.png" alt="" loading="lazy" id="movie-preview-image">
+                            <img src="Assets/images/image-placeholder.png" alt="" loading="lazy" id="movie-preview-image2">
+                        </div>
+                        <span id="movie-name-preview">Movie title</span>
+                        <span id="movie-desc-preview">Movie description</span>
+                    </div>
+            </div>
+            <div class="add-episode-bottom">
+                <button class="add-episode-bottomButtons" id="cancel-add-actualMovie" onclick="hideAddActualMovie()">Close</button>
+                <button class="add-episode-bottomButtons" id="confirm-add-actualMovie">Add movie</button>
+                <img src="Assets/images/qiurl-logo-white.png" alt="" id="loading-add-movie">
+            </div>
+        </div>
+    </div>
+ 
+    <div class="extra-player">
+        <button class="extra-button">
+            <img src="Assets/images/list.png" alt="">
+        </button>
+    </div>
+<div class="movie-more-menu">
+    <button class="movie-more-menubutton" id="randomize-episode">
+        <img src="Assets/images/random.png" alt="">
+        <span>Shuffle</span>
+    </button>
+    <button class="movie-more-menubutton" id="give-movie-rate">
+        <img src="Assets/images/star0.png" alt="">
+        <span>Rate movie</span>
+    </button>
+    <button class="movie-more-menubutton" id="give-movie-report">
+        <img src="Assets/images/warn.png" alt="">
+        <span>Report</span>
+    </button>
+</div>
+<div class="dialog">
+    <div class="dialog-content">
+        <img src="Assets/images/error.png" alt="" id="dialog-img">
+        <span class="dialog-title">Error!</span>
+        <span class="dialog-desc">There was an error getting movies from Cartoon Network. Please try again later!</span>
+        <div class="dialog-bottom">
+            <button class="dialog-buttons" id="dialog-close">Close</button>
+            <button class="dialog-buttons" id="dialog-confirm">Confirm</button>
+        </div>
+    </div>
+</div>
+<div class="debug-log">
+    <button class="button" id="back-log" onclick="hideLog();">
+        <img src="Assets/images/close.png" alt="">
+    </button>
+    <hr id="hr-horizontal2">
+   </div>
+   <div id="iframe-container">
+    <iframe id="iframe" tabindex="0" src="" allow="autoplay"></iframe>
+    <div id="overlay"></div>
+    <div class="iframe-controls">
+        <div class="iframe-control" id="go-video-back">
+            <img src="Assets/images/back2.png" alt="">
+        </div>
+        <div class="iframe-control" id="view-playlist" onclick="showPlaylist();">
+            <img src="Assets/images/playlist.png" alt="">
+        </div>
+        <div class="iframe-control" id="view-playlist">
+            <img src="Assets/images/next.png" alt="">
+        </div>
+      </div>
+      
+  </div>
+  <div class="playlist-back">
+    <div class="playlist">
+    <div class="playlist-top">
+        <img src="Assets/images/playlist.png" alt="">
+        <span id="playlist-title">
+            Tabara lui Lazlo
+        </span>
+        <button class="button" id="close-playlist" onclick="hidePlaylist();">
+            <img src="Assets/images/close.png" alt="">
+        </button>
+    </div>
+    <div class="playlist-content">
+        <div class="playlist-entry">
+            
+        </div>
+    </div>
+    </div>
+ </div>
+ <div class="usage-report">
+    <div class="usage-report-top">
+        <button class="button" id="close-usage" onclick="hideUsage();">
+            <img src="Assets/images/close.png" alt="">
+        </button>
+        <span>Usage report</span>
+        <select name="usage-period" id="usage-period">
+            <option value="today">Current period</option>
+        </select>
+    </div>
+    <div class="usage-report-content">
+        <div class="usage-report-analytics">
+            <div class="usage-report-analytics-reads">
+            <span id="total-reads">Reads</span>
+            <span id="total-reads-value">25k</span>
+            </div>
+            <hr class="hr-vertical">
+            <div class="usage-report-analytics-writes">
+                <span id="total-writes">Writes</span>
+                <span id="total-writes-value">15k</span>
+                </div>
+        </div>
+        <div class="usage-info">
+  <h2>Usage Overview</h2> 
+  <p>Here you can view how this app has been used on <strong>your current device</strong>. The information reflects data activity like reads and writes during this session.</p>
+
+  <h3>Tips to Optimize Your Usage:</h3>
+  <ul>
+    <li>Avoid refreshing the app repeatedly when viewing the same content.</li>
+    <li>Use the built-in history and suggestion features to access recent data quickly.</li>
+    <li>Navigate inside the app instead of reopening it from scratch.</li>
+  </ul>
+
+  <h3>App Performance</h3>
+  <p>The <strong>Qiurl</strong> app is designed to be efficient. It automatically <strong>caches data in session storage</strong> to minimize unnecessary reads and improve performance during use.</p>
+</div>
+    </div>
+ </div>
+   <div class="debug-mode">
+        <span>Debug mode</span>
+   </div>
+   </div>
+   <div class="rate-movie">
+    <div class="rate-movie-content">
+        <span id="rate-movie-title">Rate movie</span>
+        <div class="movie-ratings">
+            <img src="Assets/images/star0.png" alt="" id="rating-star">
+            <img src="Assets/images/star0.png" alt="" id="rating-star">
+            <img src="Assets/images/star0.png" alt="" id="rating-star">
+            <img src="Assets/images/star0.png" alt="" id="rating-star">
+            <img src="Assets/images/star0.png" alt="" id="rating-star">
+        </div>
+        <div class="movie-rating-bottom">
+            <button class="button" id="confirm-rating">
+                <img src="Assets/images/ok.png" alt="">
+            </button>
+        </div>
+    </div>
+   </div>
+   <div class="report-movie">
+        <div class="report-movie-content">
+            <div class="report-movie-content-top">
+                Report content
+            </div>
+            <div class="report-movie-content-content">
+                <select name="report-reason" id="report-reason">
+                    <option value="owner">This content infringes copyright</option>
+                    <option value="duplicate">Duplicate of another upload</option>
+                    <option value="audio">Audio is out of sync or missing</option>
+                    <option value="quality">Very low video/audio quality</option>
+                    <option value="source">Video doesn’t play / broken link</option>
+                    <option value="playback">Playback issues</option>
+                    <option value="adult">Contains adult or explicit material</option>
+                    <option value="offensive">Offensive or harmful content</option>
+                    <option value="notCorrect">This is not the correct movie/episode</option>
+                    <option value="mislabeled">Mislabeled or misleading title</option>
+                    <option value="noMatch">This content doesn't match its description</option>
+
+                    <option value="other">Other...</option>
+                </select>
+                <textarea name="report-more" id="report-more" placeholder="Enter more details..."></textarea>
+            </div>
+            <div class="report-movie-content-bottom">
+                <button class="button" id="confirm-report">Report</button>
+            </div>
+        </div>
+   </div>
+</body>
+</html>

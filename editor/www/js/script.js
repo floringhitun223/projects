@@ -1,7 +1,6 @@
 console.log('Firebase.js loaded');
 console.log('Initializing navigation components...');
 
-// Navigation logic (if used)
 const navbarItems = document.querySelectorAll('.navbar-item');
 const detailSections = document.querySelectorAll('.detail-section');
 
@@ -10,8 +9,13 @@ console.log('Found detail sections:', detailSections.length);
 
 navbarItems.forEach(item => {
   item.addEventListener('click', () => {
-    navbarItems.forEach(i => i.classList.remove('active'));
+    navbarItems.forEach(i => {
+      i.classList.remove('active');
+      i.querySelector('.navbar-item-title').style.display = 'none'; // hide text
+    });
+
     item.classList.add('active');
+    item.querySelector('.navbar-item-title').style.display = 'block'; // show text
 
     const targetId = item.getAttribute('data-target');
     const currentActive = document.querySelector('.detail-section.active');
@@ -25,6 +29,7 @@ navbarItems.forEach(item => {
     }, 100);
   });
 });
+
 
 // Optional: search bar interaction
 const searchInput = document.getElementById('search-input');
@@ -734,22 +739,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Prevent Quill from losing focus when clicking .button elements
 document.addEventListener('mousedown', (event) => {
-  // Find closest '.button' ancestor if any
   const button = event.target.closest('.button');
-  
-  // Find closest '.font-size' ancestor if any
   const fontSizeBtn = event.target.closest('.font-size');
-  
-  // Only apply this focus-preserving logic if it's a '.button' but NOT a '.font-size'
+
   if (button && !fontSizeBtn) {
-    event.preventDefault();
-    
+    event.preventDefault(); // Prevent losing selection on click
+
     const currentSelection = quill.getSelection();
-    
+
+    // Restore selection if it was lost (only if needed)
     setTimeout(() => {
-      quill.focus();
-      if (currentSelection) {
-        quill.setSelection(currentSelection);
+      const newSelection = quill.getSelection();
+      if (!newSelection && currentSelection) {
+        quill.setSelection(currentSelection); // Restore if selection was lost
       }
     }, 0);
   }
@@ -868,20 +870,21 @@ function hideEditorFade() {
   
   toggleEditor = 0;
 }
-document.addEventListener('deviceready', function() {
-  document.addEventListener('backbutton', function(e) {
+document.addEventListener('deviceready', function () {
+  document.addEventListener('backbutton', function (e) {
     if (toggleEditor === 1) {
-      e.preventDefault();  // prevent default back behavior (exit app or go back)
-      hideEditor();
+      e.preventDefault(); // Stop default back action
+
+      quill.setContents([]);         // Clear all editor content
+      hideEditor();                  // Hide the editor UI
       showDialog("Tylto auto-saves your project");
-      quill.setContents([]);  // Clears the editor completely
+      toggleEditor = 0;              // Reset editor state
     } else {
-      // Default behavior, e.g. exit app or go back in history
-      navigator.app.backHistory();
+      navigator.app.backHistory();   // Default back behavior
     }
   }, false);
 });
-;
+
 
 // Handle Ctrl+E for debug toggle
 document.addEventListener('keydown', function(event) {
@@ -1130,15 +1133,28 @@ function showDialog(message) {
   dialog.classList.add('show');
   dialog.style.display = 'flex';
 
+  // Wait 2.5 seconds before hiding
   setTimeout(() => {
+    // Prepare to hide dialog
+    const onAnimationEnd = () => {
+      dialog.style.display = 'none';
+      dialog.removeEventListener('animationend', onAnimationEnd);
+    };
+
+    // Add listener before triggering hide animation
+    dialog.addEventListener('animationend', onAnimationEnd);
+
     dialog.classList.remove('show');
     dialog.classList.add('hide');
-    dialog.addEventListener('animationend', function handler() {
+
+    // Fallback in case animationend doesn't fire
+    setTimeout(() => {
       dialog.style.display = 'none';
-      dialog.removeEventListener('animationend', handler);
-    });
+      dialog.removeEventListener('animationend', onAnimationEnd);
+    }, 500); // Match your hide animation duration (adjust if needed)
   }, 2500);
 }
+
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'd' || event.key === 'D') {
@@ -1228,3 +1244,83 @@ function hideImageEdit(){
   const menu = document.querySelector('.image-manipulation');
   menu.style.display = 'none';
 }
+
+
+  document.getElementById("upload-document").addEventListener("click", function () {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = [
+      "image/*",
+      ".pdf",
+      ".doc",
+      ".docx",
+      ".xls",
+      ".xlsx",
+      ".csv",
+      // you can add more extensions as needed
+    ].join(",");
+
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // --- 1) Log basic File object properties ---
+      console.log("=== File Metadata ===");
+      console.log("Name:", file.name);
+      console.log("Size (bytes):", file.size);
+      console.log("MIME type:", file.type || "—no MIME type reported—");
+      console.log("Last modified (timestamp):", file.lastModified);
+      console.log("Last modified (Date):", new Date(file.lastModified));
+      // Note: webkitRelativePath is for folder-based inputs; usually empty here:
+      console.log("webkitRelativePath:", file.webkitRelativePath);
+
+      // --- 2) Attempt to read as text if it’s a “text/*” or CSV file ---
+      const isTextType =
+        file.type.startsWith("text/") ||
+        file.type === "application/json" ||
+        file.name.toLowerCase().endsWith(".csv"); // CSV often comes as text/csv
+
+      if (isTextType) {
+        const textReader = new FileReader();
+        textReader.onload = (e) => {
+          console.log("=== File Content (as text) ===");
+          console.log(e.target.result); // raw text
+        };
+        textReader.onerror = (e) => {
+          console.error("Error reading file as text:", e);
+        };
+        textReader.readAsText(file);
+      }
+
+      // --- 3) Always read as Data URL (base64) so you can see the raw bytes (images, PDFs, DOCX, etc.) ---
+      const dataUrlReader = new FileReader();
+      dataUrlReader.onload = (e) => {
+        console.log("=== File Content (as Data URL) ===");
+        console.log(e.target.result);
+        // e.target.result will look like "data:<mime-type>;base64,AAAA…"
+      };
+      dataUrlReader.onerror = (e) => {
+        console.error("Error reading file as Data URL:", e);
+      };
+      dataUrlReader.readAsDataURL(file);
+
+      // --- 4) If you also want an ArrayBuffer (raw bytes) for binary inspection: ---
+      const arrayBufferReader = new FileReader();
+      arrayBufferReader.onload = (e) => {
+        const arrayBuffer = e.target.result;
+        console.log("=== File Content (as ArrayBuffer) ===");
+        console.log(arrayBuffer);
+        // If you need a hex dump or to inspect byte-by-byte, you can do:
+        // const bytes = new Uint8Array(arrayBuffer);
+        // console.log("First 100 bytes (hex):", Array.from(bytes.slice(0,100)).map(b => b.toString(16).padStart(2, "0")).join(" "));
+      };
+      arrayBufferReader.onerror = (e) => {
+        console.error("Error reading file as ArrayBuffer:", e);
+      };
+      arrayBufferReader.readAsArrayBuffer(file);
+    };
+
+    input.click();
+  });
+
+  

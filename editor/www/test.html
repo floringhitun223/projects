@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF to ContentEditable Converter</title>
+  <style>
+    /* CSS for PDF-to-ContentEditable Converter */
+    .d-e-worksheet {
+      position: relative;
+      width: 100%;
+      height: auto;
+      box-sizing: border-box;
+    }
+
+    .d-e-worksheet [id^="content-editable"] {
+      position: relative;
+      padding: 10px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      overflow: visible;
+      border: 1px solid #ddd;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .d-e-worksheet [id^="content-editable"]:focus {
+      outline: 2px solid #3b82f6;
+    }
+
+    .d-e-worksheet .pdf-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+
+    .d-e-worksheet .pdf-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      vertical-align: top;
+      word-wrap: break-word;
+    }
+
+    .d-e-worksheet .pdf-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .d-e-worksheet .pdf-table tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .d-e-worksheet .pdf-rectangle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .d-e-worksheet img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    #pdf-loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #pdf-loading div:last-child {
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    #pdf-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 6px;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    #pdf-notification.success {
+      background: #10b981;
+    }
+
+    #pdf-notification.error {
+      background: #ef4444;
+    }
+
+    #pdf-notification.info {
+      background: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-e-worksheet">
+    <!-- Dynamically populated with #content-editable-{index} divs -->
+  </div>
+  <button id="test-pdf">Upload PDF</button>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // PDF to ContentEditable Converter
+    // Initialize PDF.js worker
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    } else {
+      console.error('PDF.js library not loaded.');
+    }
+
+    // Color utilities
+    const rgbToHex = (r, g, b) => {
+      return (
+        '#' +
+        [r, g, b]
+          .map((x) => {
+            const hex = Math.round(x * 255).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+          })
+          .join('')
+      );
+    };
+
+    // Font mapping
+    const fontMapping = {
+      times: 'Times New Roman, Times, serif',
+      helvetica: 'Arial, Helvetica, sans-serif',
+      courier: 'Courier New, Courier, monospace',
+      arial: 'Arial, Helvetica, sans-serif',
+      georgia: 'Georgia, serif',
+      verdana: 'Verdana, sans-serif',
+      trebuchet: 'Trebuchet MS, sans-serif',
+      comic: 'Comic Sans MS, cursive',
+      impact: 'Impact, sans-serif',
+      calibri: 'Calibri, sans-serif',
+      cambria: 'Cambria, serif'
+    };
+
+    const normalizeFontName = (fontName) => {
+      if (!fontName) return 'Arial, sans-serif';
+      const cleanName = fontName.toLowerCase().replace(/[^a-z]/g, '');
+      for (const [key, value] of Object.entries(fontMapping)) {
+        if (cleanName.includes(key)) return value;
+      }
+      return `${fontName.split(',')[0]}, sans-serif`;
+    };
+
+    // Extract text styles
+    const extractTextStyles = (textItem) => {
+      const styles = {};
+      if (textItem.fontName) {
+        styles.fontFamily = normalizeFontName(textItem.fontName);
+        const fontLower = textItem.fontName.toLowerCase();
+        if (
+          fontLower.includes('bold') ||
+          fontLower.includes('black') ||
+          fontLower.includes('heavy') ||
+          fontLower.includes('extra') ||
+          fontLower.includes('ultra') ||
+          fontLower.includes('semi')
+        ) {
+          styles.fontWeight = 'bold';
+        }
+        if (fontLower.includes('italic') || fontLower.includes('oblique') || fontLower.includes('slant')) {
+          styles.fontStyle = 'italic';
+        }
+        if (fontLower.includes('underline')) {
+          styles.textDecoration = 'underline';
+        }
+      }
+      if (textItem.height) {
+        const ptSize = textItem.height;
+        const pxSize = Math.round(ptSize * 1.25);
+        styles.fontSize = `${pxSize}px`;
+      }
+      if (textItem.color && Array.isArray(textItem.color) && textItem.color.length >= 3) {
+        styles.color = rgbToHex(textItem.color[0], textItem.color[1], textItem.color[2]);
+      }
+      if (
+        textItem.backgroundColor &&
+        Array.isArray(textItem.backgroundColor) &&
+        textItem.backgroundColor.length >= 3
+      ) {
+        styles.backgroundColor = rgbToHex(
+          textItem.backgroundColor[0],
+          textItem.backgroundColor[1],
+          textItem.backgroundColor[2]
+        );
+      }
+      return styles;
+    };
+
+    // Convert styles to inline CSS
+    const stylesToCss = (styles) => {
+      return Object.entries(styles)
+        .map(([key, value]) => `${key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())}: ${value};`)
+        .join(' ');
+    };
+
+    // Table detection
+    const detectTables = (textItems) => {
+      const tables = [];
+      const rowGroups = {};
+      const Y_TOLERANCE = 5;
+      const MAX_ITEMS_PER_ROW = 20;
+
+      textItems.forEach((item, index) => {
+        if (!item.transform || !item.transform[5]) return;
+        const y = Math.round(item.transform[5] * 10) / 10;
+        let foundRow = false;
+        for (const existingY in rowGroups) {
+          if (Math.abs(y - parseFloat(existingY)) <= Y_TOLERANCE) {
+            if (rowGroups[existingY].length < MAX_ITEMS_PER_ROW) {
+              rowGroups[existingY].push({ ...item, originalIndex: index });
+              foundRow = true;
+            }
+            break;
+          }
+        }
+        if (!foundRow) {
+          rowGroups[y] = [{ ...item, originalIndex: index }];
+        }
+      });
+
+      const sortedRows = Object.keys(rowGroups)
+        .map((y) => parseFloat(y))
+        .sort((a, b) => b - a)
+        .map((y) => rowGroups[y]);
+
+      let currentTable = null;
+      sortedRows.forEach((row) => {
+        if (row.length >= MAX_ITEMS_PER_ROW) return;
+        row.sort((a, b) => a.transform[4] - b.transform[4]);
+        if (isTableRow(row)) {
+          if (!currentTable) {
+            currentTable = {
+              rows: [],
+              columns: calculateColumnPositions(row)
+            };
+          }
+          if (rowFitsTableStructure(row, currentTable.columns)) {
+            currentTable.rows.push(row);
+            currentTable.columns = mergeColumnPositions(currentTable.columns, calculateColumnPositions(row));
+          } else {
+            if (currentTable.rows.length >= 2) {
+              tables.push(currentTable);
+            }
+            currentTable = {
+              rows: [row],
+              columns: calculateColumnPositions(row)
+            };
+          }
+        } else {
+          if (currentTable && currentTable.rows.length >= 2) {
+            tables.push(currentTable);
+          }
+          currentTable = null;
+        }
+      });
+
+      if (currentTable && currentTable.rows.length >= 2) {
+        tables.push(currentTable);
+      }
+
+      return tables;
+    };
+
+    const isTableRow = (row) => {
+      if (row.length < 2 || row.length > 12) return false;
+      const positions = row.map((item) => item.transform[4]);
+      const gaps = [];
+      for (let i = 1; i < positions.length; i++) {
+        gaps.push(positions[i] - positions[i - 1]);
+      }
+      const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length;
+      const gapVariance = gaps.reduce((sum, gap) => sum + Math.pow(gap - avgGap, 2), 0) / gaps.length;
+      return gapVariance < 2000 && avgGap > 10;
+    };
+
+    const calculateColumnPositions = (row) => {
+      return row.map((item) => ({
+        start: item.transform[4],
+        end: item.transform[4] + (item.width || 50),
+        center: item.transform[4] + (item.width || 50) / 2
+      }));
+    };
+
+    const rowFitsTableStructure = (row, columns) => {
+      const rowPositions = calculateColumnPositions(row);
+      let matches = 0;
+      const TOLERANCE = 30;
+      for (const rowPos of rowPositions) {
+        for (const colPos of columns) {
+          if (Math.abs(rowPos.center - colPos.center) <= TOLERANCE) {
+            matches++;
+            break;
+          }
+        }
+      }
+      return matches >= Math.min(row.length, columns.length) * 0.6;
+    };
+
+    const mergeColumnPositions = (pos1, pos2) => {
+      const merged = [...pos1];
+      const MERGE_TOLERANCE = 20;
+      for (const p2 of pos2) {
+        let found = false;
+        for (let i = 0; i < merged.length; i++) {
+          if (Math.abs(merged[i].center - p2.center) <= MERGE_TOLERANCE) {
+            merged[i] = {
+              start: Math.min(merged[i].start, p2.start),
+              end: Math.max(merged[i].end, p2.end),
+              center: (merged[i].center + p2.center) / 2
+            };
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          merged.push(p2);
+        }
+      }
+      return merged.sort((a, b) => a.center - b.center);
+    };
+
+    const tableToHtml = (table) => {
+      try {
+        let html = `<table class="pdf-table">`;
+        const maxCols = Math.max(...table.rows.map((row) => row.length));
+        table.rows.forEach((row) => {
+          html += '<tr>';
+          const cellsByPosition = [];
+          const sortedCells = [...row].sort((a, b) => a.transform[4] - b.transform[4]);
+          for (let colIndex = 0; colIndex < maxCols; colIndex++) {
+            let bestCell = null;
+            let bestDistance = Infinity;
+            for (const cell of sortedCells) {
+              if (cellsByPosition.includes(cell)) continue;
+              const cellPos = cell.transform[4];
+              const expectedPos = table.columns[colIndex]?.start || 0;
+              const distance = Math.abs(cellPos - expectedPos);
+              if (distance < bestDistance && distance < 100) {
+                bestCell = cell;
+                bestDistance = distance;
+              }
+            }
+            if (bestCell) {
+              cellsByPosition.push(bestCell);
+            } else {
+              cellsByPosition.push(null);
+            }
+          }
+          cellsByPosition.forEach((cell) => {
+            let cellStyle = '';
+            let cellContent = '';
+            if (cell) {
+              const styles = extractTextStyles(cell);
+              cellStyle = stylesToCss(styles);
+              cellContent = (cell.str || '').trim();
+            }
+            html += `<td style="${cellStyle}">${cellContent}</td>`;
+          });
+          html += '</tr>';
+        });
+        html += '</table>';
+        return html;
+      } catch (e) {
+        console.warn('Error generating table HTML:', e);
+        return '';
+      }
+    };
+
+    // Process text with exact formatting
+    const processTextWithExactFormatting = (items, pageWidthPx, pageHeightPx) => {
+      let html = '';
+      const sortedItems = [...items].sort((a, b) => {
+        const dy = b.transform[5] - a.transform[5];
+        if (Math.abs(dy) > 5) return dy;
+        return a.transform[4] - b.transform[4];
+      });
+
+      // Group into lines
+      const lines = [];
+      let currentLine = [];
+      let lastY = null;
+      sortedItems.forEach((item) => {
+        if (!item.transform || !item.transform[5]) return;
+        const y = item.transform[5];
+        if (lastY !== null && Math.abs(y - lastY) > 5) {
+          if (currentLine.length) lines.push({ items: currentLine, y: lastY });
+          currentLine = [];
+        }
+        currentLine.push(item);
+        lastY = y;
+      });
+      if (currentLine.length) lines.push({ items: currentLine, y: lastY });
+
+      // Process lines
+      lines.forEach((line, index) => {
+        const xs = line.items.map((item) => item.transform[4]);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs.map((x, i) => x + (line.items[i].width || 0)));
+        const centerX = minX + (maxX - minX) / 2;
+        const pageCenter = pageWidthPx / 2;
+        let textAlign = 'left';
+        const threshold = pageWidthPx * 0.1;
+        if (Math.abs(centerX - pageCenter) < threshold) {
+          textAlign = 'center';
+        } else if (maxX > pageWidthPx * 0.8) {
+          textAlign = 'right';
+        }
+
+        html += `<p style="text-align: ${textAlign}; margin: 0;">`;
+        line.items.forEach((item, itemIndex) => {
+          const styles = extractTextStyles(item);
+          let text = item.str || '';
+          if (itemIndex > 0) {
+            const prev = line.items[itemIndex - 1];
+            const gap = item.transform[4] - (prev.transform[4] + (prev.width || 0));
+            if (gap > 3) text = ' ' + text;
+          }
+          const css = stylesToCss(styles);
+          html += `<span style="${css}">${text}</span>`;
+        });
+        html += '</p>';
+
+        // Add spacing
+        if (index < lines.length - 1) {
+          const deltaY = line.y - lines[index + 1].y;
+          const spacingPx = Math.max(0, Math.round(deltaY * 1.25));
+          if (spacingPx > 5) {
+            html += `<div style="height: ${spacingPx}px;"></div>`;
+          }
+        }
+      });
+
+      return html;
+    };
+
+    // Convert page to HTML content
+    const convertPageToHTML = async (page, pageNum, contentDivs) => {
+      let htmlContent = '';
+      const viewport = page.getViewport({ scale: 1.0 });
+      const pageWidthPx = Math.round(viewport.width);
+      const pageHeightPx = Math.round(viewport.height);
+
+      // Set page dimensions
+      if (contentDivs[pageNum - 1]) {
+        contentDivs[pageNum - 1].style.width = `${pageWidthPx}px`;
+        contentDivs[pageNum - 1].style.height = `${pageHeightPx}px`;
+      }
+
+      // Extract background color
+      let pageBackgroundColor = '#000000';
+      let currentFill = null;
+      const shapes = [];
+      const imagesData = [];
+
+      // Render page to canvas
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = pageWidthPx;
+      tempCanvas.height = pageHeightPx;
+      const tempCtx = tempCanvas.getContext('2d');
+      try {
+        await page.render({ canvasContext: tempCtx, viewport }).promise;
+      } catch (err) {
+        console.warn(`Error rendering page ${pageNum}:`, err);
+      }
+
+      // Parse operator list
+      try {
+        const opList = await page.getOperatorList();
+        for (let i = 0; i < opList.fnArray.length; i++) {
+          const fnId = opList.fnArray[i];
+          const args = opList.argsArray[i];
+
+          if (fnId === pdfjsLib.OPS.setFillRGBColor) {
+            const [r, g, b] = args;
+            currentFill = rgbToHex(r, g, b);
+          }
+
+          if (fnId === pdfjsLib.OPS.fillRect && currentFill) {
+            const x = Math.round(args[0]);
+            const y = Math.round(args[1]);
+            const w = Math.round(args[2]);
+            const h = Math.round(args[3]);
+            if (Math.abs(w - pageWidthPx) < 5 && Math.abs(h - pageHeightPx) < 5) {
+              pageBackgroundColor = currentFill;
+            } else {
+              shapes.push({ x, y, width: w, height: h, color: currentFill });
+            }
+            currentFill = null;
+          }
+
+          if (
+            fnId === pdfjsLib.OPS.paintImageXObject ||
+            fnId === pdfjsLib.OPS.paintInlineImageXObject
+          ) {
+            const matrix = args[0];
+            if (Array.isArray(matrix) && matrix.length >= 6) {
+              const scaleX = matrix[0];
+              const scaleY = matrix[3];
+              const xImg = Math.round(matrix[4]);
+              const yImg = Math.round(matrix[5]);
+              const imgW = Math.round(Math.abs(scaleX));
+              const imgH = Math.round(Math.abs(scaleY));
+              const srcY = pageHeightPx - yImg - imgH;
+              if (
+                imgW > 0 &&
+                imgH > 0 &&
+                xImg >= 0 &&
+                srcY >= 0 &&
+                xImg + imgW <= pageWidthPx &&
+                srcY + imgH <= pageHeightPx
+              ) {
+                try {
+                  const imgData = tempCtx.getImageData(xImg, srcY, imgW, imgH);
+                  const imageCanvas = document.createElement('canvas');
+                  imageCanvas.width = imgW;
+                  imageCanvas.height = imgH;
+                  imageCanvas.getContext('2d').putImageData(imgData, 0, 0);
+                  const dataUrl = imageCanvas.toDataURL('image/png');
+                  imagesData.push({ dataUrl, x: xImg, y: yImg, width: imgW, height: imgH });
+                } catch (_err) {
+                  console.warn(`Error extracting image at (${xImg}, ${srcY}):`, _err);
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`Error processing operator list for page ${pageNum}:`, err);
+      }
+
+      // Apply background
+      if (contentDivs[pageNum - 1]) {
+        contentDivs[pageNum - 1].style.backgroundColor = pageBackgroundColor;
+      }
+
+      // Add shapes
+      shapes.forEach((shape) => {
+        const cssY = pageHeightPx - shape.y - shape.height;
+        htmlContent += `<div class="pdf-rectangle" style="
+          left: ${shape.x}px;
+          top: ${cssY}px;
+          width: ${shape.width}px;
+          height: ${shape.height}px;
+          background-color: ${shape.color};
+        "></div>`;
+      });
+
+      // Add images
+      imagesData
+        .sort((a, b) => b.y - a.y)
+        .forEach((imgObj) => {
+          htmlContent += `<img src="${imgObj.dataUrl}" style="
+            width: ${imgObj.width}px;
+            height: ${imgObj.height}px;
+          ">`;
+          const spacingPx = Math.round((pageHeightPx - imgObj.y - imgObj.height) * 1.25);
+          if (spacingPx > 5) {
+            htmlContent += `<div style="height: ${spacingPx}px;"></div>`;
+          }
+        });
+
+      // Process tables
+      let textContent;
+      try {
+        textContent = await page.getTextContent();
+      } catch (err) {
+        console.warn(`Error getting text content for page ${pageNum}:`, err);
+        textContent = { items: [] };
+      }
+      const tables = detectTables(textContent.items);
+      const usedItems = new Set();
+      tables.forEach((table) => {
+        table.rows.forEach((row) => {
+          row.forEach((item) => {
+            const idx = textContent.items.findIndex(
+              (i) =>
+                Math.abs(i.transform[4] - item.transform[4]) < 2 &&
+                Math.abs(i.transform[5] - item.transform[5]) < 2 &&
+                i.str === item.str
+            );
+            if (idx >= 0) usedItems.add(idx);
+          });
+        });
+        const tableHtml = tableToHtml(table);
+        if (tableHtml) {
+          htmlContent += tableHtml;
+          const lastRowY = table.rows[table.rows.length - 1][0].transform[5];
+          const spacingPx = Math.round((pageHeightPx - lastRowY) * 1.25);
+          if (spacingPx > 5) {
+            htmlContent += `<div style="height: ${spacingPx}px;"></div>`;
+          }
+        }
+      });
+
+      // Process remaining text
+      const remainingItems = textContent.items.filter((_, idx) => !usedItems.has(idx));
+      if (remainingItems.length) {
+        htmlContent += processTextWithExactFormatting(remainingItems, pageWidthPx, pageHeightPx);
+      }
+
+      return htmlContent;
+    };
+
+    // Adjust DOM for page count
+    const adjustDomForPageCount = (pageCount) => {
+      let worksheet = document.querySelector('.d-e-worksheet');
+      if (!worksheet) {
+        worksheet = document.createElement('div');
+        worksheet.className = 'd-e-worksheet';
+        document.body.appendChild(worksheet);
+      }
+
+      const existingDivs = document.querySelectorAll('.d-e-worksheet [id^="content-editable"]');
+      const currentCount = existingDivs.length;
+
+      // Remove excess divs
+      if (currentCount > pageCount) {
+        for (let i = pageCount; i < currentCount; i++) {
+          existingDivs[i].remove();
+        }
+      }
+
+      // Add missing divs
+      for (let i = currentCount; i < pageCount; i++) {
+        const newDiv = document.createElement('div');
+        newDiv.id = `content-editable-${i}`;
+        newDiv.contentEditable = true;
+        worksheet.appendChild(newDiv);
+      }
+    };
+
+    // Handle PDF conversion
+    const handlePDFConversion = async (file) => {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+        // Adjust DOM
+        adjustDomForPageCount(pdf.numPages);
+
+        // Get contenteditable divs
+        const contentDivs = document.querySelectorAll('.d-e-worksheet [id^="content-editable"]');
+
+        // Convert each page
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const htmlContent = await convertPageToHTML(page, pageNum, contentDivs);
+          if (contentDivs[pageNum - 1]) {
+            contentDivs[pageNum - 1].innerHTML = htmlContent;
+          }
+          page.cleanup();
+        }
+
+        showLoadingIndicator(false);
+        showNotification('PDF imported successfully!', 'success');
+      } catch (error) {
+        showLoadingIndicator(false);
+        console.error('Error converting PDF:', error);
+        showNotification('Error: ' + error.message, 'error');
+      }
+    };
+
+    // Loading indicator
+    const showLoadingIndicator = (show) => {
+      const existing = document.getElementById('pdf-loading');
+      if (existing) existing.remove();
+      if (show) {
+        const loading = document.createElement('div');
+        loading.id = 'pdf-loading';
+        loading.innerHTML = `
+          <div>Converting PDF...</div>
+          <div style="margin-top: 10px; font-size: 12px;">Preserving styling and layout</div>
+        `;
+        document.body.appendChild(loading);
+      }
+    };
+
+    // Notification
+    const showNotification = (message, type = 'info') => {
+      const colors = { success: '#10b981', error: '#ef4444', info: '#3b82f6' };
+      const notification = document.createElement('div');
+      notification.id = 'pdf-notification';
+      notification.className = type;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 4000);
+    };
+
+    // Event listener
+    document.addEventListener('DOMContentLoaded', () => {
+      const testButton = document.querySelector('#test-pdf');
+      if (testButton) {
+        testButton.addEventListener('click', () => {
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = '.pdf';
+          fileInput.style.display = 'none';
+          fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/pdf') {
+              showLoadingIndicator(true);
+              handlePDFConversion(file);
+            } else {
+              showNotification('Please select a valid PDF file.', 'error');
+            }
+            document.body.removeChild(fileInput);
+          });
+          document.body.appendChild(fileInput);
+          fileInput.click();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

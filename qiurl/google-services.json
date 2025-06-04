@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "86297854793",
+    "project_id": "qiurl-new",
+    "storage_bucket": "qiurl-new.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86297854793:android:33cfef6cdc3e18f8189098",
+        "android_client_info": {
+          "package_name": "com.fgg.qiurl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86297854793-nq6m2qkg10gfim2j31v7rbos9d4lep06.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNxRo-FsfGStBVnzB07RueJPrgSwXWxCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86297854793-nq6m2qkg10gfim2j31v7rbos9d4lep06.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

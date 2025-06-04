@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.fgg.qiurl" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>qiurl</name>
+    <description>Sample Apache Cordova App</description>
+    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
+        Apache Cordova Team
+    </author>
+    <icon src="res/icon.png" />
+    <content src="index.html" />
+    <!-- Lock the orientation to portrait -->
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+<allow-navigation href="https://*.firebaseapp.com/*" />
+<allow-navigation href="https://*.google.com/*" />
+<allow-navigation href="https://accounts.google.com/*" />
+
+    <!-- Platform-specific configurations -->
+    <platform name="ios">
+        <preference name="StatusBarOverlaysWebView" value="false" />
+        <preference name="StatusBarStyle" value="lightcontent" />
+        <preference name="StatusBarBackgroundColor" value="#15191C" />
+         <preference name="NavigationBarColor" value="#15191C" />
+    </platform>
+
+    <platform name="android">
+        <preference name="StatusBarOverlaysWebView" value="false" />
+        <preference name="StatusBarBackgroundColor" value="#15191C" />
+         <preference name="StatusBarStyle" value="lightcontent" />
+        <preference name="NavigationBarColor" value="#15191C" />
+        
+        <icon src="res/icon.png" density="ldpi" />
+        <icon src="res/icon.png" density="mdpi" />
+        <icon src="res/icon.png" density="hdpi" />
+        <icon src="res/icon.png" density="xhdpi" />
+        <icon src="res/icon.png" density="xxhdpi" />
+        <icon src="res/icon.png" density="xxxhdpi" />
+    </platform>
+
+
+</widget>

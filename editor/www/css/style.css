@@ -82,8 +82,14 @@ h1 {
   }
 }
 
+.dialog.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .dialog.hide {
-  animation: fadeOutScale 0.3s ease forwards;
+  opacity: 0;
+  pointer-events: none;
 }
 
 @keyframes fadeOutScale {
@@ -193,22 +199,46 @@ h1 {
     background-color: #17202B;
     overflow: hidden;
     align-items: center;
+    gap: 5px;
 }
 .navbar-item{
   display: flex;
-  width: 100%;
+  width: 50%;
   height: calc(100% - 20px);
   background-color: transparent;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 20px;
   opacity: 0.6;
   transition: all 0.2s ease;
   img{
     width: 25px;
       transition: all 0.2s ease;
+    
+  };
+  p{
+    font-size: 14px;
+    color: #c4e0ff;
+    font-weight: 450;
+      margin-left: 10px;
   }
+}
+
+.navbar-item.active {
+  opacity: 1;
+  background-color: var(--active-color);
+  width: 100%;
+  img{
+    width: 30px;
+  }
+}
+.navbar-item .navbar-item-title {
+  display: none;
+}
+
+.navbar-item.active .navbar-item-title {
+  display: block;
 }
 
 .navbar-item:active{
@@ -223,13 +253,6 @@ h1 {
   
 }
 
-.navbar-item.active {
-  opacity: 1;
-  background-color: #0000007d;
-  img{
-    width: 30px;
-  }
-}
 
 .button{
     display: flex;
@@ -394,7 +417,7 @@ input::placeholder {
 
 .file-img{
   margin-left: 20px;
-    width: 30px;
+    width: auto;
     height: 30px;
     margin-right: 10px;
 }
@@ -538,7 +561,7 @@ input::placeholder {
   scrollbar-color: rgba(100, 100, 100, 0.4) transparent;
 }
 .editor{
-  display:none;
+  display: flex;
   width: 100%;
   height: 100%;
   background-color: var(--light-background-color);
@@ -559,25 +582,42 @@ input::placeholder {
 }
 .d-e-worksheet {
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: calc(100% - 120px);
-  background-color: #2e2e2e;
+  background-color: #232323;
   z-index: 9;
-  justify-content: center;
-
+  align-items: center;
+  overflow-y: auto;
+  
 }
 
 #d-e-worksheet-input {
-  width: 100%;
-  height: 100%;
+  min-width: 	794px;
+  min-height: 1123px;
   overflow: auto;
-  background-color: var(--light-background-color);
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #000000;
   z-index: 10;
   border: none;
   font-family: 'Times New Roman', serif;
   font-size: 15px;
-  
+  margin-bottom: 20px;
+  margin-top: 20px;
+
+}
+.pdf-page{
+    min-width: 	794px;
+  min-height: 1123px;
+  overflow: auto;
+  background-color: #ffffff;
+  color: #000000;
+  z-index: 10;
+  border: none;
+  font-family: 'Times New Roman', serif;
+  font-size: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 /* The circular resize handle */
@@ -831,8 +871,11 @@ input::placeholder {
   justify-content: center;
   align-items: center;
   opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
   animation-fill-mode: forwards;
   border-radius: 10px;
+  
   p{
     margin-left: 10px;
     margin-right: 20px;
