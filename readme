@@ -1,0 +1,71 @@
+//colors
+condition-parameter : string ( --events-string-color: #98C379;)
+condition-parameter2 : number ( --events-number-color:  #D19A66;)
+condition-parameter3 : variable ( --events-variable-color: #61AFEF;)
+condition-parameter4 : object ( --accent-color: #1E90FF;)
+
+
+//EXAMPLE EVENTS
+<div class="event-body">
+        <div class="event-dragger">
+          <img src="Assets/drag.png" alt="">
+        </div>
+        <div class="event-content_conditions">
+          <div class="condition">
+            <img src="Assets/events-icons/content-loaded.png" alt="">
+            <p>App just started</p>
+          </div>
+          <div class="condition">
+            <img src="Assets/events-icons/trigger-once.png" alt="">
+            <p>Trigger once</p>
+          </div>
+          <p id="add-ca-button">Add condition</p>
+        </div>
+        <div class="event-content_actions">
+          <div class="action">
+            <img src="Assets/media.png" alt="">
+            <p>Change media title with id <span id="action-parameter" contenteditable='false'><img src="Assets/events-icons/variable.png">17</b></span> to <span id="action-parameter2" contenteditable='false'>"Tutorial Javascript"</b></span></p>
+          </div>
+          <p id="add-ca-button">Add action</p>
+        </div>
+      </div>
+      <div class="event-body">
+        <div class="event-dragger">
+          <img src="Assets/drag.png" alt="">
+        </div>
+        <div class="event-content_conditions">
+          <div class="condition">
+            <img src="Assets/events-icons/text.png" alt="">
+            <p>The text of 
+              <span id="condition-parameter4">
+                <img src="Assets/input.png">New Text</b>
+                </span> is <span id="condition-parameter" >=
+                </span> to 
+                <span id="condition-parameter" >"Tutorial Javascript"
+              </span>
+            </p>
+          </div>
+          <p id="add-ca-button">Add condition</p>
+        </div>
+        <div class="event-content_actions">
+          <div class="action">
+            <img src="Assets/events-icons/color.png" alt="">
+            <p>Change color of <span id="action-parameter4" contenteditable='false'><img src="Assets/input.png">New Text</b></span> to <span id="action-parameter" contenteditable='false'>"#b2b2b2"</b></span></p>
+          </div>
+          <p id="add-ca-button">Add action</p>
+        </div>
+      </div>
+
+//EXAMPLE CODE block
+<div class="event-body-code">
+  <div class="event-dragger">
+    <img src="Assets/drag.png" alt="">
+  </div>
+  <div class="editor-container">
+    <!-- This textarea will be turned into a CodeMirror editor -->
+    <textarea id="code-editor" name="code">let x = 10;
+  console.log(x);</textarea>
+  </div>
+</div>
+
+//EXAMPLE COMMENT

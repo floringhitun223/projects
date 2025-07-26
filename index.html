@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>aDevelop - Create web apps without codding</title>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <meta name='description' content='A brief description of the page'>
+        <link rel='stylesheet' href='style.css'>
+        <script src='script.js' defer></script>
+        <link rel='icon' href='favicon.ico' type='image/x-icon'>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/codemirror.min.css">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/theme/monokai.min.css">
+
+  <!-- Include CodeMirror JS for functionality -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/codemirror.min.js"></script>
+
+  <!-- Include CodeMirror JavaScript mode for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/mode/javascript/javascript.min.js"></script>
+      </head>      
+<body>
+    <!-- MAIN FRAME --------->
+<div class = 'main-frame'>
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class ="menu">
+                <img src="Assets/menu.png" alt="">
+            </button>
+            <button class ="save">
+                <img src="Assets/save.png" alt="">
+            </button>
+        </div>
+        <div class="top-bar-center">
+            <button class="changeState" id="changeStateUi" onclick="hideEditor();">
+              <img src="Assets/home.png" alt="">
+              <span class = "changeStateTitles">My scene</span>
+            </button>
+            <select name="select-scene" id="select-scene">
+              <option value="MyScene1">MyScene1</option>
+              <option value="MyScene1">MyScene1</option>
+              <option value="MyScene1">MyScene1</option>
+              <option value="MyScene1">MyScene1</option>
+              <option value="MyScene1">MyScene1</option>
+              <option value="MyScene1">MyScene1</option>
+            </select>
+            <button class="changeState" id="changeStateEvents"onclick="showEditor();">
+              <img src="Assets/props.png" alt="">
+              <span class = "changeStateTitles">Scene logic</span>
+            </button>
+                        
+        </div>
+        <div class="top-bar-right">
+            <button class ="show-preview">
+              <img src="Assets/events-icons/phone.png" alt="">
+            </button>
+            <button class ="undo">
+                <img src="Assets/undo-on.png" alt="">
+            </button>
+            <button class ="redo">
+                <img src="Assets/redo-off.png" alt="">
+            </button>
+            <hr class = "hr4">
+            <button class ="variables" onclick="showVariablesList()" id="variable-button">
+                <img src="Assets/var.png" alt="">
+            </button>
+        </div>
+    </div>
+    <div class ="main-container">
+        <div class="left-panel">
+            <div class="left-panel-title">
+                <div class = "left-panel-left">
+                <p>Objects</p>
+                </div>
+                <div class = "left-panel-right">
+                    <button class="search-button">
+                    <img src="Assets/search.png" alt="">
+                    </button>
+                    </div>
+            </div>
+            <div class="left-panel-content">
+                <div class="layers-list">
+                <div class="layer-list">
+                   <!---EMPTY FOR NOW-->
+                    
+                  </div>
+                </div>
+                  
+                
+            </div>
+            <div class="left-panel-bottom">
+                <button class="add-container" onclick="addContainer()">
+                    <p>Quick add box</p>
+                </button>
+                <button class = "add-object"onclick="addObjectShow()">
+                    <img src="Assets/add.png" alt="">
+                </button>
+            </div>
+        </div>
+        <div class="viewport">
+          <div class="web-view" >
+            <div class="user-body">
+            </div>
+            <div class="context-menu">
+              <div class="context-menu-item1" onclick="setFullSizeFromNameWidth();  hideContextMenu();">
+                <img src="Assets/resize-width.png" alt="">
+                <p>Expand on X</p>
+              </div>
+              <div class="context-menu-item2" onclick="setFullSizeFromNameHeight();  hideContextMenu();">
+                <img src="Assets/resize-height.png" alt="">
+                <p>Expand on Y</p>
+              </div>
+              <div class="context-menu-item3" onclick="setFullSizeFromNameWidth();  hideContextMenu(); setFullSizeFromNameHeight();">
+                <img src="Assets/full.png" alt="">
+                <p>Fully expand</p>
+              </div>
+              <div class="context-menu-item4" onclick=" hideContextMenu(); showWrapTarget(event) ">
+                <img src="Assets/move.png" alt="">
+                <p>Wrap in...</p>
+              </div>
+            </div>
+            <div class="wrap-target">
+              <form>
+                <label for="wrap-options">Wrap inside
+                  <img src="Assets/move.png" alt="">
+                </label>
+                <select id="wrap-options" name="display-content">
+                    <option value="user-body">General box</option>
+                </select>
+            </form>
+            <button class = "wrap-confirm" onclick=" hideWrapTarget();">
+                Confirm
+            </button>
+            </div>
+          </div>
+          <div class="user-body-properties">
+            <img src="Assets/zoom.png" id = "zoom-img" alt=""></img>
+            <div class="zoom-container"
+                <span id="zoom-range-min">20</span>
+                <input type="range" id="zoom-range" min="20" max="100" value="100" step="1">
+                <span id="zoom-range-max">100</span>
+            </div>
+            <hr class="hr4">
+            <select id="web-view-device" name="web-view-device">
+              <option value="mobile">Mobile</option>
+              <option value="computer">Computer</option>
+              <option value="tablet">Tablet</option>
+          </select>
+           
+            <button id = "port-button">
+                <img src="Assets/port.png" alt="">
+                <p>Port: 5500</p>
+            </button>
+        </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="right-panel-title">
+                <p>Properties</p>
+            </div>
+            <div class="right-panel-content">
+                <div class="obj-name">
+                    <img src="Assets/object.png" alt="">
+                    Container
+                </div>
+                <div class="object-action">
+                  <button id="edit-object">
+                    <img src="Assets/edit.png" alt="">
+                  </button>
+                  <button id="delete-object">
+                    <img src="Assets/delete.png" alt="">
+                  </button>
+              </div>
+                <hr>
+                <div class="prop-display-section">
+                    <form>
+                        <label for="display-content">Display</label>
+                        <select id="display-content" name="display-content">
+                            <option value="none">none</option>
+                            <option value="block">block</option>
+                            <option value="inline">inline</option>
+                            <option value="inline-block">inline-block</option>
+                            <option value="flex">flex</option>
+                            <option value="grid">grid</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="prop-layout-title">
+                    
+                  <p> Layout direction</p>
+                  <hr class = "hr2">
+              </div>
+              <div class="prop-layout-section">
+                  <button class="layout-h" onclick="applyFlexByIdFromName('row');">
+                      Row
+                  </button>
+                  <button class="layout-v" onclick="applyFlexByIdFromName('column');">
+                      Column
+                  </button>
+              </div>
+                <div class="prop-layout-title-margins">
+                    <p> Position and size</p>
+                    <hr class = "hr2">
+                </div>
+                <div class="prop-position-section">
+                    <label for="margin-left">X</label>
+                    <input type="number" id ="margin-left" value="10"></input>
+                    <label for="margin-top">Y</label>
+                    <input type="number" id ="margin-top" value="10" ></input>
+                     <!--- X and Y--------------->
+                
+<script>
+ const marginLeftInput = document.getElementById('margin-left');
+const marginTopInput = document.getElementById('margin-top');
+let isDraggingMarginLeft = false;
+let isDraggingMarginTop = false;
+let initialMouseX = 0;
+let initialMouseY = 0;
+let initialMarginLeft = 0;
+let initialMarginTop = 0;
+
+marginLeftInput.addEventListener('mousedown', (e) => {
+  isDraggingMarginLeft = true;
+  initialMouseX = e.clientX;
+  initialMarginLeft = parseFloat(marginLeftInput.value) || 0;
+  e.preventDefault();
+});
+
+marginTopInput.addEventListener('mousedown', (e) => {
+  isDraggingMarginTop = true;
+  initialMouseX = e.clientX;
+  initialMarginTop = parseFloat(marginTopInput.value) || 0;
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (isDraggingMarginLeft) {
+    const deltaX = e.clientX - initialMouseX;
+    const step = 1;
+    marginLeftInput.value = initialMarginLeft + deltaX * step;
+    updateElementPosition();
+  }
+  if (isDraggingMarginTop) {
+    const deltaX = e.clientX - initialMouseX;
+    const step = 1;
+    marginTopInput.value = initialMarginTop + deltaX * step;
+    updateElementPosition();
+  }
+});
+
+document.addEventListener('mouseup', () => {
+  isDraggingMarginLeft = false;
+  isDraggingMarginTop = false;
+});
+
+marginLeftInput.addEventListener('dblclick', () => {
+  marginLeftInput.removeAttribute('readonly');
+  marginLeftInput.focus();
+});
+
+marginTopInput.addEventListener('dblclick', () => {
+  marginTopInput.removeAttribute('readonly');
+  marginTopInput.focus();
+});
+
+marginLeftInput.addEventListener('blur', () => {
+  marginLeftInput.setAttribute('readonly', true);
+  updateElementPosition();
+});
+
+marginTopInput.addEventListener('blur', () => {
+  marginTopInput.setAttribute('readonly', true);
+  updateElementPosition();
+});
+
+marginLeftInput.addEventListener('input', updateElementPosition);
+marginTopInput.addEventListener('input', updateElementPosition);
+
+function updateElementPosition() {
+  const marginLeftValue = marginLeftInput.value;
+  const marginTopValue = marginTopInput.value;
+  const unit = "px";
+  const elementId = document.querySelector('.obj-name').innerText;
+  const targetElement = document.getElementById(elementId);
+
+  if (targetElement) {
+    targetElement.style.marginLeft = marginLeftValue + unit;
+    targetElement.style.marginTop = marginTopValue + unit;
+  }
+}
+
+</script>
+                </div>     
+                <div class="prop-position-section2">
+                    <label for="margin-right">M</label>
+                    <input type="number" id ="margin-right" value="0" ></input>
+                    <label for="margin-bottom">M</label>
+                    <input type="number" id ="margin-bottom" value="0"></input>
+                    
+                </div>
+               
+                <div class="prop-size-section">
+                    <label for="width">W</label>
+                    <input type="number" id ="width" value="100"> </input>
+                        <select id="width-option" name="width-option">
+                            <option value="px">px</option>
+                            <option value="percent">%</option>
+                        </select>
+                    <label for="height">H</label>
+                    <input type="number" id ="height" value="100"> </input>
+                    <select id="height-option" name="height-option">
+                        <option value="px">px</option>
+                        <option value="percent">%</option>
+                    </select>
+                    <!--Modifiyng width-->
+                      <script>
+                        
+                        const input = document.getElementById('width');
+                        let isDragging = false;
+                        let startX = 0;
+                        let startValue = 0;
+                    
+                        // Drag to adjust value
+                        input.addEventListener('mousedown', (e) => {
+                          isDragging = true;
+                          startX = e.clientX;
+                          startValue = parseFloat(input.value) || 0;
+                          e.preventDefault();
+                        });
+                    
+                        document.addEventListener('mousemove', (e) => {
+                          if (isDragging) {
+                            const deltaX = e.clientX - startX;
+                            const step = 1;
+                            input.value = startValue + deltaX * step;
+                            updateElementWidth();
+                          }
+                        });
+                    
+                        document.addEventListener('mouseup', () => {
+                          isDragging = false;
+                        });
+                    
+                        // Double-click for manual input
+                        input.addEventListener('dblclick', () => {
+                          input.removeAttribute('readonly');
+                          input.focus();
+                        });
+                    
+                        // Lock after manual entry
+                        input.addEventListener('blur', () => {
+                          input.setAttribute('readonly', true);
+                          updateElementWidth();
+                        });
+                    
+                        // Update width on input manually
+                        input.addEventListener('input', updateElementWidth);
+                    
+                        // Function to update target element width
+                        function updateElementWidth() {
+                          let widthValue = input.value;
+                          let unit = document.getElementById('width-option').value;
+                          const elementId = document.querySelector('.obj-name').innerText;
+                          const targetElement = document.getElementById(elementId);
+                    
+                          if (targetElement) {
+                            targetElement.style.width = widthValue + unit;
+                          }
+                        }
+                      </script>
+                        <!--Modifiyng height-->
+                      <script>
+                      const heightInput = document.getElementById('height'); // Renamed from 'input' to 'heightInput'
+                      let isDraggingHeight = false; // Renamed from 'isDragging' to 'isDraggingHeight'
+                      let startXPos = 0; // Renamed from 'startX' to 'startXPos'
+                      let initialHeight = 0; // Renamed from 'startValue' to 'initialHeight'
+                  
+                      // Drag to adjust height value
+                      heightInput.addEventListener('mousedown', (e) => {
+                        isDraggingHeight = true;
+                        startXPos = e.clientX;
+                        initialHeight = parseFloat(heightInput.value) || 0;
+                        e.preventDefault();
+                      });
+                  
+                      document.addEventListener('mousemove', (e) => {
+                        if (isDraggingHeight) {
+                          const deltaX = e.clientX - startXPos;
+                          const step = 1;
+                          heightInput.value = initialHeight + deltaX * step;
+                          updateElementHeight();
+                        }
+                      });
+                  
+                      document.addEventListener('mouseup', () => {
+                        isDraggingHeight = false;
+                      });
+                  
+                      // Double-click for manual input
+                      heightInput.addEventListener('dblclick', () => {
+                        heightInput.removeAttribute('readonly');
+                        heightInput.focus();
+                      });
+                  
+                      // Lock after manual entry
+                      heightInput.addEventListener('blur', () => {
+                        heightInput.setAttribute('readonly', true);
+                        updateElementHeight();
+                      });
+                  
+                      // Update height on input manually
+                      heightInput.addEventListener('input', updateElementHeight);
+                  
+                      // Function to update target element height
+                      function updateElementHeight() {
+                        let heightValue = heightInput.value;
+                        let unit = document.getElementById('height-option').value;
+                        const elementId = document.querySelector('.obj-name').innerText;
+                        const targetElement = document.getElementById(elementId);
+                  
+                        if (targetElement) {
+                          targetElement.style.height = heightValue + unit;
+                        }
+                      }
+                      </script>
+            
+            
+              
+                
+                  
+                    
+                </div>
+                <hr>
+                <div class="prop-position-section3">
+                  <button id="alignment-left">
+                    <img src="Assets/align-left.png" alt="">
+                  </button>
+                  <button id="alignment-center">
+                    <img src="Assets/align-center.png" alt="">
+                  </button>
+                  <button id="alignment-right">
+                    <img src="Assets/align-right.png" alt="">
+                  </button>
+              </div>
+             
+                <div class="prop-layout-title-style">
+                    <p> Style</p>
+                    <hr class = "hr3">
+                </div>
+                <div class="prop-container-color">
+                    <label for='colorInput'>Color</label>
+                    <input type='color' id='colorInput' value='#b2b2b2'>
+                    <input type='text' id='hexInput' value='#b2b2b2'>
+                    <button class ="paste-button">
+                        <img src="Assets/paste.png" alt="">
+                    </button>
+                </div>
+                <div class="prop-container-outline">
+                    <label for='colorInput-outline'>Stroke</label>
+                    <input type='number' id='outline-size' placeholder="Size..." value='1'>
+                    <input type='color' id='colorInput-outline' value='#b2b2b2'>
+                    <input type="checkbox" id="keep-outline" disabled="true" name="ratio">
+                    
+                </div>
+                <div class="prop-alignments-section">
+                    <form>
+                        <label for="justify-content">Align on X</label>
+                        <select id="justify-content" name="justify-content">
+                            <option value="left">left</option>
+                            <option value="right">right</option>
+                            <option value="center">center</option>
+                            <option value="space-between">space-between</option>
+                            <option value="space-around">space-around</option>
+                            <option value="space-evenly">space-evenly</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="prop-alignments-section-vertical">
+                    <form>
+                        <label for="align-items">Align on Y</label>
+                        <select id="align-items" name="align-items">
+                            <option value="top">top</option>
+                            <option value="bottom">bottom</option>
+                            <option value="center">center</option>
+                            <option value="stretch">stretch</option>
+                            <option value="baseline">baseline</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="aspect-ratio">
+                     <label for="keep-aspect">Keep aspect ratio</label>
+                    <input type="checkbox" id="keep-aspect" name="ratio">
+                </div>
+                <div class="prop-layout-title-text">
+                    <p> Text</p>
+                    <hr class = "hr3">
+                </div>
+                <textarea class="text-modifier" name="message" rows="4" cols="50" placeholder="Enter text to show..." value= "MyObject"></textarea>
+                <div class="prop-text-font-section">
+                    <form>
+                        <label for="align-items">Font</label>
+                        <select id="align-items" name="align-items">
+                            <option value="top">Arial</option>
+                            <option value="bottom">Times New Roman</option>
+                            <option value="baseline">Custom...</option>
+                        </select>
+                    </form>
+                    
+                </div>
+                <div class="prop-text-size-section">
+                    <label for="font-size">Size</label>
+                    <input type="number" id ="font-size" value="13"</input>
+                    <form>
+                        <select id="align-items" name="align-items">
+                            <option value="top">small</option>
+                            <option value="bottom">normal</option>
+                            <option value="baseline">bold</option>
+                            <option value="baseline">italic</option>
+                            <option value="baseline">linethrought</option>
+                        </select>
+                    </form>
+                    
+                </div>
+                <div class="prop-container-color-text">
+                    <label for='colorInput'>Color:</label>
+                    <input type='color' id='colorInput' value='#b2b2b2'>
+                    <input type='text' id='hexInput' value='#b2b2b2'>
+                    <button class ="paste-button">
+                        <img src="Assets/paste.png" alt="">
+                    </button>
+                </div>
+                <div class="prop-text-decoration-section">
+                    <form>
+                        <label for="align-items">Decoration</label>
+                        <select id="align-items" name="align-items">
+                            <option value="underline">underline</option>
+                            <option value="line through">line through</option>
+                            <option value="custom">Custom...</option>
+                        </select>
+                    </form>
+                    
+                </div>
+                <div class="prop-layout-title-image">
+                    <p> Image</p>
+                    <hr class = "hr3">
+                </div>
+                <div class="image-uploader">
+                    <form>
+                        <label for="image-upload">Source:</label>
+                        <input type="file" id="image-upload" name="image" accept="image/*">
+                      </form>
+                </div>
+                <div class="preview-uploaded-image">
+                    <img src="https://wallpapershome.com/images/pages/pic_h/26756.jpg" alt="">
+                    
+                </div>
+                <div class="alt-text">
+                    <label for="alt-text">Caption</label>
+                    <input type="text" id ="alt-text" value="" placeholder="Enter caption here..."</input>
+                </div>
+                
+                <hr>
+                
+            </div>
+            <div class="right-panel-no_content">
+                <p>
+            Click on an instance on the canvas or an object in the list to display their properties.
+                </p>
+        </div>
+        </div>
+    </div>
+    <div class="events">
+      <div class="events-area">
+        <div class="event-body">
+        <div class="event-dragger">
+          <img src="Assets/events-icons/event.png" alt="">
+          <span contenteditable="true">Event 1</span>
+        </div>
+        <div class="event-content">
+          <div class="event-content_conditions">
+          <div class="condition">
+            <img src="Assets/events-icons/text.png" alt="">
+            <p>The text of 
+              <span class = "parameter-input"  id="condition-parameter4" onclick="showEventInput(event);  input_type_object(); modifySpan(); log_event_parameter(event);">
+                <img src="Assets/input.png" >New Text</b>
+                </span> is <span id="condition-parameter" >=
+                </span> to 
+                <span class = "parameter-input"  id="condition-parameter" onclick="showEventInput(event);  input_type_string(); modifySpan(); log_event_parameter(event);" >"Tutorial Javascript"
+              </span>
+            </p>
+          </div>
+          <button id="add-ca-button">
+            <img src="Assets/add.png" alt="">
+            <span id="add-ca-button-text">Add condition</span>
+          </button>
+          </div>
+          <div class="event-content_actions">
+          <div class="action">
+            <img src="Assets/events-icons/color.png" alt="">
+            <p>Change color of <span class = "parameter-input"  id="action-parameter4" onclick="showEventInput(event);  input_type_object(); modifySpan(); log_event_parameter(event);" contenteditable='false'><img src="Assets/input.png">New Text</b></span> to <span class = "parameter-input"  id="action-parameter"  onclick="showEventInput(event);  input_type_color(); modifySpan(); log_event_parameter(event);" contenteditable='false'>"#b2b2b2"</b></span></p>
+          </div>
+          <button id="add-ca-button">
+            <img src="Assets/add.png" alt="">
+            <span id="add-ca-button-text">Add action</span>
+          </button>
+          </div>
+      </div>
+        </div>
+        <div class="event-body-code">
+        <div class="event-dragger">
+          <img src="Assets/events-icons/js.png" alt="">
+          <span contenteditable="false">Javascript code</span>
+        </div>
+        <div class="event-content">
+          <div class="editor-container">
+    
+          <textarea id="code-editor" name="code">let x = 10;
+         console.log(x);</textarea>
+          </div>
+       </div>
+        </div>
+        <div class="event-body-comment">
+        <div class="event-dragger">
+          <img src="Assets/events-icons/comment.png" alt="">
+          <span contenteditable="true">Comment</span>
+        </div>
+          <textarea name="comment" id="comment" placeholder="Your comment goes here..."></textarea>
+        </div>
+        <div class="event-body-library">
+        <div class="event-dragger">
+          <img src="Assets/events-icons/lib.png" alt="">
+          <span contenteditable="true">Library</span>
+        </div>
+          <p>Load library from url:
+            <span class = "parameter-input" id="url-parameter" onclick="showEventInput(event); input_type_url(); modifySpan(); log_event_parameter(event);">
+             https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/theme/material.min.css
+           </span>
+         </p>
+        </div>
+        <div class="event-body-comment">
+        <div class="event-dragger">
+          <img src="Assets/events-icons/comment.png" alt="">
+          <span contenteditable="true">Comment</span>
+        </div>
+          <textarea name="comment" id="comment" placeholder="Your comment goes here..."></textarea>
+        </div>
+        <div class="event-body">
+        <div class="event-dragger">
+          <img src="Assets/events-icons/event.png" alt="">
+          <span contenteditable="true">Event 1</span>
+        </div>
+        <div class="event-content">
+          <div class="event-content_conditions">
+          <div class="condition">
+            <img src="Assets/events-icons/position.png" alt="">
+            <p>The position of
+              <span class = "parameter-input"  id="condition-parameter4" onclick="showEventInput(event);  input_type_object(); modifySpan(); log_event_parameter(event);">
+                <img src="Assets/container.png" >container1</b>
+                </span> is
+                <span class = "parameter-input"  id="condition-parameter" onclick="showEventInput(event);  input_type_string(); modifySpan(); log_event_parameter(event);" >relative
+              </span>
+            </p>
+          </div>
+          <button id="add-ca-button">
+            <img src="Assets/add.png" alt="">
+            <span id="add-ca-button-text">Add condition</span>
+          </button>
+          </div>
+          <div class="event-content_actions">
+          <div class="action">
+            <img src="Assets/events-icons/color.png" alt="">
+            <p>Change color of <span class = "parameter-input"  id="action-parameter4" onclick="showEventInput(event);  input_type_object(); modifySpan(); log_event_parameter(event);" contenteditable='false'><img src="Assets/input.png">New Text</b></span> to <span class = "parameter-input"  id="action-parameter"  onclick="showEventInput(event);  input_type_color(); modifySpan(); log_event_parameter(event);" contenteditable='false'>"#b2b2b2"</b></span></p>
+          </div>
+          <button id="add-ca-button">
+            <img src="Assets/add.png" alt="">
+            <span id="add-ca-button-text">Add action</span>
+          </button>
+          </div>
+      </div>
+        </div>
+      <button id="add-event-button">
+        <img src="Assets/add.png" alt="">
+        <span>Add event</span>
+      </button>
+      </div>
+      <div id="events-preview-dragger">
+      </div>
+      <div class="build-preview">
+        <div class="build-preview-topbar">
+          <span id="build-preview-title">
+            Live preview
+          </span>
+          <div class="build-preview-topbar-controls">
+            <button class="build-preview-topbar-controls-btn" id="reload-preview">
+              <img src="Assets/events-icons/reload.png" alt="">
+            </button>
+            <button class="build-preview-topbar-controls-btn" id="reload-debug">
+              <img src="Assets/events-icons/debug.png" alt="">
+            </button>
+            <button class="build-preview-topbar-controls-btn" id="reload-screenshot">
+              <img src="Assets/events-icons/screenshot.png" alt="">
+            </button>
+            <button class="build-preview-topbar-controls-btn" id="reload-fullscreen">
+              <img src="Assets/full.png" alt="">
+            </button>
+          </div>
+        </div>
+        <div class="build-preview-device">
+          <div class="build-preview-device-screen">
+          
+          </div>
+        </div>
+        <div class="build-preview-bottombar">
+            <button class="build-preview-bottombar-controls-btn" id="more-preview">
+              <img src="Assets/events-icons/more.png" alt="">
+            </button>
+            <button class="build-preview-bottombar-controls-btn" id="home-preview">
+              <img src="Assets/events-icons/home.png" alt="">
+            </button>
+            <button class="build-preview-bottombar-controls-btn" id="back-preview">
+              <img src="Assets/events-icons/back.png" alt="">
+            </button>
+          </div>
+          <div class="debugger">
+            <div class="debugger-topbar">
+              <img src="Assets/events-icons/debug.png" alt="">
+              <span id = "debugger-title">
+                Console
+              </span>
+            </div>
+            <div class="debugger-content">
+             <span class="debugger-text-content" id="debugger-text">
+                element succesfully created
+              </span>
+             <hr>
+             <span class="debugger-text-content" id="debugger-text">
+              element succesfully created
+            </span>
+           <hr>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+    <div class="variables-list">
+      <div class = "variables-list-topbar">
+        <span id="variables-list-title">
+           Variables
+        </span>
+      </div>
+      <div class = "variables-list-content">
+      </div>
+      <div class = "variables-list-bottombar">
+        <button id="variable-add" onclick="addVariableBody()">
+          Add variable
+        </button>
+        <button id="variable-close" onclick="hideVariablesList()">
+          Close
+        </button>
+      </div>
+    </div>
+    <div class="event-input">
+      <span id = "event-input-name">Object</span>
+      <input type="text" id="event-input-field" placeholder="Select an element..."></input>
+      
+      <span id = "event-input-error">You entered a number, but a string is expected.</span>
+    </div>
+<div class = "object-chooser">
+        <div class="object-chooser-body">
+            <div class ="object-chooser-topbar">
+                <div class ="object-chooser-topbar-left">
+                    <p>Add object</p>
+                </div>
+                <div class ="object-chooser-topbar-right">
+                    <button class="object-chooser-topbar-close" onclick= "addObjectHide()";>
+                        <img src="Assets/close.png" alt="">
+                    </button>
+                </div>
+            </div>
+            <div class ="object-chooser-content">
+                            <div class ="object-chooser-content-left">
+                    <div class = "object-chooser-content-left-top">
+                    <div class ="obj-search-body">
+                        <input type="text" class="obj-search-input" placeholder="Search object">
+                        <button class="search-button">
+                            <img src="Assets/search.png" alt="">
+                        </button>
+                        
+                    </div>
+                </div>
+                <div class = "object-chooser-content-left-content">
+                    <div class="obj-layer-list">
+
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer" class="obj-layer-radio">
+                                    <label for="obj-layer1" class="obj-layer-header"onclick="document.getElementById('obj-expand').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/object.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                     Box
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item1-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item1-1">
+                                          <img src="Assets/object.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Simple Box
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item1-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item1-2">
+                                          <img src="Assets/header.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Header
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item1-3" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item1-3">
+                                          <img src="Assets/content.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Page content
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item1-4" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item1-4">
+                                          <img src="Assets/footer.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Footer
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item1-5" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item1-5">
+                                          <img src="Assets/article.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Article
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand2" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer2" class="obj-layer-radio">
+                                    <label for="obj-layer2" class="obj-layer-header"onclick="document.getElementById('obj-expand2').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand2').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/input.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Text
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item2-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item2-1">
+                                          <img src="Assets/Heading.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Heading
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item2-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item2-2">
+                                          <img src="Assets/paragraph.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Paragraph
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item2-3" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item2-3">
+                                          <img src="Assets/inline.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Inline text
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item2-4" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item2-4">
+                                          <img src="Assets/quote.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Quote
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item2-5" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item2-5">
+                                          <img src="Assets/code.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Code block
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand3" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer3" class="obj-layer-radio">
+                                    <label for="obj-layer3" class="obj-layer-header"onclick="document.getElementById('obj-expand3').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand3').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/button.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Button
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item3-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item3-1">
+                                          <img src="Assets/button.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Simple button
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item3-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item3-2">
+                                          <img src="Assets/switch.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Switch
+                                        </label>
+                                        
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand4" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer4" class="obj-layer-radio">
+                                    <label for="obj-layer4" class="obj-layer-header"onclick="document.getElementById('obj-expand4').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand4').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/text.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Input
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/text.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Single line
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item4-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-2">
+                                          <img src="Assets/text.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Multiple lines
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item5-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item5-2">
+                                          <img src="Assets/checkbox.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Checkbox
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item6-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item6-2">
+                                          <img src="Assets/radio.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Single selection choices
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item7-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item7-2">
+                                          <img src="Assets/dropdown.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Dropdown menu
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item8-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item8-2">
+                                          <img src="Assets/slider.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Slider
+                                        </label>
+                                          
+                                        <input type="radio" name="obj-layer" id="obj-item9-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item9-2">
+                                          <img src="Assets/file-upload.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          File upload
+                                        </label>
+                                          
+                                        <input type="radio" name="obj-layer" id="obj-item10-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item10-2">
+                                          <img src="Assets/calendar.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Date picker
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item11-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item11-2">
+                                          <img src="Assets/color.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Color picker
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand5" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer5" class="obj-layer-radio">
+                                    <label for="obj-layer5" class="obj-layer-header"onclick="document.getElementById('obj-expand5').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand5').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/media.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Media
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/image.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Image
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item4-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-2">
+                                          <img src="Assets/video.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Video
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item5-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item5-2">
+                                          <img src="Assets/audio.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Audio
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item6-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item6-2">
+                                          <img src="Assets/media.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Icon
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item7-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item7-2">
+                                          <img src="Assets/frame.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          iFrame
+                                        </label>
+                                        
+                                        
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand6" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer6" class="obj-layer-radio">
+                                    <label for="obj-layer6" class="obj-layer-header"onclick="document.getElementById('obj-expand6').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand6').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/form.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Forms
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/form.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Simple form
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item4-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-2">
+                                          <img src="Assets/form.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Fieldset
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item5-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item5-2">
+                                          <img src="Assets/label.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Label
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item6-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item6-2">
+                                          <img src="Assets/submit.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Submit button
+                                        </label>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand7" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer7" class="obj-layer-radio">
+                                    <label for="obj-layer7" class="obj-layer-header"onclick="document.getElementById('obj-expand7').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand7').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/list.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Lists
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/list.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Unordered list
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item4-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-2">
+                                          <img src="Assets/list.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Ordered list
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item5-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item5-2">
+                                          <img src="Assets/list.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Descriptive list
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item6-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item6-2">
+                                          <img src="Assets/list.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Nested list
+                                        </label>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand8" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer8" class="obj-layer-radio">
+                                    <label for="obj-layer8" class="obj-layer-header"onclick="document.getElementById('obj-expand8').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand8').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/interactive.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Interactive elements
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/popup.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Popup
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item4-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-2">
+                                          <img src="Assets/tooltip.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Tooltip
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item5-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item5-2">
+                                          <img src="Assets/expandable.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Expandable section
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item6-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item6-2">
+                                          <img src="Assets/tabs.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Tabs
+                                        </label>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand9" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer9" class="obj-layer-radio">
+                                    <label for="obj-layer9" class="obj-layer-header"onclick="document.getElementById('obj-expand9').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand9').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/navbar.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Navigation
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/navbar.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Navigation bar
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item4-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-2">
+                                          <img src="Assets/path.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Navigation path
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item5-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item5-2">
+                                          <img src="Assets/pagination.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Pagination
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item6-2" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item6-2">
+                                          <img src="Assets/navbar.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Sidemenu
+                                        </label>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand10" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer10" class="obj-layer-radio">
+                                    <label for="obj-layer10" class="obj-layer-header"onclick="document.getElementById('obj-expand10').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand10').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/table.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Table
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/table.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Simple table
+                                        </label>
+                                        
+                                        
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand11" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer101" class="obj-layer-radio">
+                                    <label for="obj-layer11" class="obj-layer-header"onclick="document.getElementById('obj-expand11').click(); event.stopPropagation(); toggleExpandIcon();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand11').click(); event.stopPropagation(); toggleExpandIcon();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/page.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Pre-built elements
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        coming soon...
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="obj-layer-item">
+                                    <input type="checkbox" id="obj-expand12" class="obj-expand-toggle">
+                                    <input type="radio" name="obj-layer" id="obj-layer101" class="obj-layer-radio">
+                                    <label for="obj-layer12" class="obj-layer-header"onclick="document.getElementById('obj-expand12').click(); event.stopPropagation();">
+                                      <button class="obj-expand-button" onclick="document.getElementById('obj-expand12').click(); event.stopPropagation();">
+                                        <img src="Assets/expand.png" id="obj-item-icon-expand" alt="expand">
+                                      </button>
+                                      <img src="Assets/other.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                    Other
+                                    </label>
+                                    <div class="obj-layer-content">
+                                      <div class="obj-layer-content-inner">
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/loading.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Progress bar
+                                        </label>
+                                        
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/loading.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Loading spinner
+                                        </label>
+
+                                        <input type="radio" name="obj-layer" id="obj-item4-1" class="obj-item-radio">
+                                        <label class="obj-list-item" for="obj-item4-1">
+                                          <img src="Assets/notif.png" id="obj-item-icon" class="obj-item-icon" alt="">
+                                          Notification
+                                        </label>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>    
+                            <div class ="object-chooser-content-right">
+                              <div class ="object-tips">
+                                <div class ="object-tip-image">
+                                 <img src="Assets/text.png" alt="">
+                                 </div>
+                                <div class ="object-tip">
+                                  An <b>input</b> is like a blank box on a webpage where you can type text. It's used to get information from you, like your name or email address. But it can be in various types, accepting from text to images and colors.
+                                </div>
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/WEUjaz2AKz8?si=5CBjoPlyH6gdcfJI&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                              </div>
+                              <div class="no-selected-object">
+                                Click on a category to start adding objects.
+                              </div>
+                            </div>
+                </div>
+                <div class ="object-chooser-bottombar">
+                  <div class ="object-chooser-bottombar-left">
+                      <img src="Assets/help.png" alt="">
+                      <p>Help</p>
+                  </div>
+                  <div class ="object-chooser-bottombar-right">
+                      <button id="object-chooser-close" class = "object-chooser-buttons" onclick= "addObjectHide()">
+                        <p>Close</p>
+                      </button>
+                      <button id="object-chooser-confirm" class = "object-chooser-buttons" onclick= "addObjectHide()">
+                        <p>Confirm</p>
+                      </button>
+                  </div>
+              </div>
+                </div>
+               
+            </div>
+        </div>
+</div>
+</div>
+
+
+    <!-- END OF MAIN FRAME -->
+
+</body>
+</html>

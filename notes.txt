@@ -1,0 +1,303 @@
+// Global variables
+let parentIdSuffix = '';  // Track current parent for layers
+let counter = 1;
+let lastSelectedContainer = null;
+
+// Layer Management Functions
+function addLayer(parentIdSuffix, title, isSubLayer = false) {
+    console.log('Adding layer:', {
+        parentIdSuffix,
+        title,
+        isSubLayer,
+        lastSelected: lastSelectedContainer ? lastSelectedContainer.id : 'none'
+    });
+
+    // Find parent element for the new layer
+    let parentElement;
+    if (isSubLayer) {
+        // For sublayers, find the parent layer's nested-list
+        const parentLayerId = `layer-container-${parentIdSuffix}`;
+        parentElement = document.querySelector(`#${parentLayerId} .nested-list`);
+        console.log('Using nested list of:', parentLayerId);
+    } else {
+        parentElement = document.querySelector('.layer-list');
+        console.log('Using root layer list');
+    }
+
+    if (!parentElement) {
+        console.error('Parent element not found for', parentIdSuffix);
+        return;
+    }
+
+    // Create new layer
+    const newLayer = document.createElement('div');
+    newLayer.className = 'layer-item';
+    
+    // Generate appropriate layer ID
+    const layerId = isSubLayer ? `${parentIdSuffix}-${title}` : title;
+    newLayer.id = `layer-container-${layerId}`;
+    
+    console.log('Creating layer with ID:', layerId);
+
+    newLayer.innerHTML = `
+        <input type="checkbox" id="expand${layerId}" class="expand-toggle">
+        <input type="radio" name="layer" id="layer${layerId}" class="layer-radio">
+        <label for="layer${layerId}" class="layer-header">
+            <button class="expand-button" onclick="document.getElementById('expand${layerId}').click(); event.stopPropagation();">
+                <img src="Assets/expand.png" id="item-icon-expand" class="expand-icon" alt="expand">
+            </button>
+            <img src="Assets/container.png" id="item-icon" class="item-icon" alt="">
+            ${title}
+        </label>
+        <div class="layer-content">
+            <div class="layer-content-inner">
+                <div class="nested-list"></div>
+            </div>
+        </div>
+    `;
+
+    parentElement.appendChild(newLayer);
+
+    // Setup event listeners and expand state
+    setupExpandIconRotation();
+    setupLayerEventListeners(newLayer, title, isSubLayer);
+
+    // Auto-expand parent and current layer if it's a sublayer
+    if (isSubLayer) {
+        // Expand current layer
+        const expandCheckbox = newLayer.querySelector('.expand-toggle');
+        if (expandCheckbox) {
+            expandCheckbox.checked = true;
+            const icon = newLayer.querySelector('.expand-icon');
+            if (icon) {
+                icon.style.transform = 'rotate(90deg)';
+            }
+        }
+
+        // Ensure parent layer is expanded
+        const parentLayer = document.querySelector(`#layer-container-${parentIdSuffix}`);
+        if (parentLayer) {
+            const parentCheckbox = parentLayer.querySelector('.expand-toggle');
+            if (parentCheckbox) {
+                parentCheckbox.checked = true;
+                const parentIcon = parentLayer.querySelector('.expand-icon');
+                if (parentIcon) {
+                    parentIcon.style.transform = 'rotate(90deg)';
+                }
+            }
+        }
+    }
+}
+
+// Container Management Functions
+function addContainer() {
+    const containerId = `container${counter}`;
+    console.log('Creating new container:', containerId);
+    console.log('Last selected container:', lastSelectedContainer ? lastSelectedContainer.id : 'none');
+
+    const containerBox = document.createElement('div');
+    containerBox.className = 'container-box';
+    containerBox.id = containerId;
+
+    setupContainerStyles(containerBox);
+    setupContainerEventListeners(containerBox);
+
+    if (lastSelectedContainer) {
+        // Add container to last selected container
+        lastSelectedContainer.appendChild(containerBox);
+        console.log('Added container inside:', lastSelectedContainer.id);
+        
+        // Add layer using the last selected container's ID as parent
+        addLayer(lastSelectedContainer.id, containerId, true);
+    } else {
+        // Add to root level
+        const userBody = document.querySelector('.user-body');
+        userBody.appendChild(containerBox);
+        console.log('Added container to user-body');
+        
+        addLayer(containerId, containerId, false);
+    }
+
+    counter++;
+    return containerBox;
+}
+
+function setupContainerStyles(container) {
+    Object.assign(container.style, {
+        width: '100px',
+        height: '100px',
+        marginLeft: '0px',
+        marginTop: '0px',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: getRandomColor(),
+        position: 'relative'
+    });
+}
+
+function setupContainerEventListeners(container) {
+    container.addEventListener('mouseenter', () => {
+        if (!container.classList.contains('selected')) {
+            container.style.outline = '2px solid #1E90FF';
+        }
+    });
+
+    container.addEventListener('mouseleave', () => {
+        if (!container.classList.contains('selected')) {
+            container.style.outline = 'none';
+        }
+    });
+
+    container.addEventListener('click', function(event) {
+        event.stopPropagation();
+        handleContainerClick(this);
+    });
+}
+
+// Event Listeners and Handlers
+function setupLayerEventListeners(layer, title, isSubLayer = false) {
+    const expandCheckbox = layer.querySelector('.expand-toggle');
+    const radioButton = layer.querySelector('input[type="radio"]');
+
+    if (expandCheckbox) {
+        expandCheckbox.addEventListener('change', function() {
+            const containerToSelect = document.getElementById(title);
+            if (expandCheckbox.checked && containerToSelect) {
+                showGeneralProperties();
+                hideNoContent();
+            }
+        });
+    }
+
+    layer.addEventListener('click', function(event) {
+        event.stopPropagation();
+
+        if (event.target !== expandCheckbox && event.target !== layer.querySelector('.expand-button')) {
+            const selectedLayerId = layer.id.replace('layer-container-', '');
+            parentIdSuffix = selectedLayerId; // Update parent context
+            console.log('Layer clicked:', selectedLayerId, 'Parent context:', parentIdSuffix);
+
+            const container = document.getElementById(title);
+            if (container) {
+                lastSelectedContainer = container;
+                console.log('Updated last selected container:', lastSelectedContainer.id);
+                
+                selectContainerFromLayer(container);
+                radioButton.checked = true;
+            }
+        }
+    });
+}
+
+function handleContainerClick(container) {
+    if (!container) {
+        deselectAllLayers();
+        lastSelectedContainer = null;
+        console.log('Reset container selection');
+        return;
+    }
+
+    console.log('Container clicked:', container.id);
+    lastSelectedContainer = container;
+    console.log('Updated last selected container:', lastSelectedContainer.id);
+
+    selectContainerFromLayer(container);
+}
+
+function selectContainerFromLayer(container) {
+    // Deselect all containers first
+    document.querySelectorAll('.container-box').forEach(c => {
+        c.classList.remove('selected');
+        c.style.outline = 'none';
+        c.querySelectorAll('.resize-handle').forEach(h => h.remove());
+    });
+
+    // Select the new container
+    container.classList.add('selected');
+    container.style.outline = '2px solid #1E90FF';
+
+    // Update UI
+    document.querySelector('.obj-name').innerText = container.id;
+    showGeneralProperties();
+    hideNoContent();
+    addResizeHandles(container);
+    updateInputValues(container);
+
+    const displayContentSelect = document.getElementById('display-content');
+    displayContentSelect.value = getComputedStyle(container).display;
+    updateFlexDirectionButtonStates(container);
+
+    console.log('Container selected:', container.id);
+}
+
+// Utility Functions
+function setupExpandIconRotation() {
+    document.querySelectorAll('.expand-toggle').forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const button = this.nextElementSibling.nextElementSibling.querySelector('.expand-button');
+            const icon = button.querySelector('.expand-icon');
+            if (this.checked) {
+                icon.style.transform = 'rotate(90deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
+}
+
+function getSelectedLayerId() {
+    const selectedRadio = document.querySelector('input[type="radio"][name="layer"]:checked');
+    const selectedId = selectedRadio ? selectedRadio.id.replace('layer', '') : null;
+    console.log('Currently selected layer ID:', selectedId);
+    return selectedId;
+}
+
+function syncLayerSelection(container) {
+    const layerRadio = document.querySelector(`#layer${container.id}`);
+    if (layerRadio) {
+        layerRadio.checked = true;
+    }
+
+    const nestedLayers = container.querySelectorAll('.layer-item');
+    nestedLayers.forEach(nestedLayer => {
+        const nestedLayerRadio = nestedLayer.querySelector('input[type="radio"]');
+        if (nestedLayerRadio) {
+            nestedLayerRadio.checked = true;
+        }
+    });
+}
+
+function updateParentLayerState(parentContainer) {
+    if (parentContainer.querySelector('.expand-toggle')) {
+        parentContainer.querySelector('.expand-toggle').checked = true;
+        const button = parentContainer.querySelector('.expand-button');
+        if (button) {
+            const icon = button.querySelector('.expand-icon');
+            if (icon) {
+                icon.style.transform = 'rotate(90deg)';
+            }
+        }
+    }
+}
+
+function getContainerPath(container) {
+    const path = [];
+    let current = container;
+    while (current && !current.classList.contains('user-body')) {
+        path.unshift(current.id);
+        current = current.parentElement;
+    }
+    return path;
+}
+
+
+  // Utility to get a random color
+  function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+  }
+  
